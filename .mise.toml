@@ -1,0 +1,10 @@
+[tools]
+bun = "1.2"
+"npm:lefthook" = "1.12.2"
+
+[tasks.setup]
+run = [
+  "cp ./.vscode/settings.example.json ./.vscode/settings.json",
+  "mise i",
+  "lefthook install",
+]

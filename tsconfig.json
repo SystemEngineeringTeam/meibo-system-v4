@@ -1,0 +1,45 @@
+{
+  "extends": "@tsconfig/strictest/tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "jsx": "react-jsx",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "baseUrl": ".",
+    "rootDirs": [
+      ".",
+      "./.react-router/types"
+    ],
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "paths": {
+      "@/*": ["src/*"],
+      "@shared/*": ["./shared/src/*"],
+      "~/*": ["./public/*"],
+      "panda/*": ["./panda/*"],
+      "package": ["./package.json"]
+    },
+    "resolveJsonModule": true,
+    "types": [
+      "node",
+      "vite/client",
+      "unplugin-icons/types/react"
+    ],
+    "noEmit": true,
+    "outDir": "dist",
+    "forceConsistentCasingInFileNames": true,
+    "verbatimModuleSyntax": true
+  },
+  "include": [
+    "**/*",
+    "**/.server/**/*",
+    "**/.client/**/*",
+    ".react-router/types/**/*",
+    "panda.config.ts",
+    "./shared"
+  ],
+  "exclude": [
+    "node_modules",
+    "build/",
+    "panda/"
+  ]
+}

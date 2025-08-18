@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "ignorePaths": [
+    "package.json"
+  ],
+  "words": [
+    "JPDOC",
+    "nanostores",
+    "palt",
+    "pandacss",
+    "UDEV Gothic 35JPDOC",
+    "unplugin"
+  ]
+}

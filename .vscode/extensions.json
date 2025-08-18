@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "chakra-ui.panda-css-vscode",
+    "arktypeio.arkdark",
+    "oven.bun-vscode",
+    "streetsidesoftware.code-spell-checker",
+    "dbaeumer.vscode-eslint",
+    "hverlin.mise-vscode"
+  ]
+}
