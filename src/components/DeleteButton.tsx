@@ -80,7 +80,7 @@ export function DeleteButton(props: any): ReactElement {
   return (
     <StyledDeleteButton {...props}>
       <DeleteIcon />
-      削除
+      {props.children}
     </StyledDeleteButton>
   );
 }

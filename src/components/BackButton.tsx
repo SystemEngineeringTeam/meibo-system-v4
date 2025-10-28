@@ -82,7 +82,7 @@ export function BackButton(props: any): ReactElement {
   return (
     <StyledBackButton {...props}>
       <BackIcon />
-      戻る
+      {props.children}
     </StyledBackButton>
   );
 }

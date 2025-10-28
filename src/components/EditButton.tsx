@@ -80,7 +80,7 @@ export function EditButton(props: any): ReactElement {
   return (
     <StyledEditButton {...props}>
       <EditIcon />
-      編集
+      {props.children}
     </StyledEditButton>
   );
 }
