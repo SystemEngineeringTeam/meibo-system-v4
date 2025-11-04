@@ -1,8 +1,5 @@
 import type { ReactElement } from "react";
 import { styled as p } from "panda/jsx";
-import { BackButton } from "@/components/BackButton";
-import { DeleteButton } from "@/components/DeleteButton";
-import { EditButton } from "@/components/EditButton";
 import { Button } from "@/components/recipes/atomic/Button";
 
 export default function (): ReactElement {
@@ -12,9 +9,6 @@ export default function (): ReactElement {
         やあ
       </p.div>
       <Button>hi</Button>
-      <BackButton>Back</BackButton>
-      <DeleteButton>Delete</DeleteButton>
-      <EditButton>Edit</EditButton>
     </>
   );
 }
