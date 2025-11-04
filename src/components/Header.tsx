@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { Box } from "panda/jsx";
+import { Box, Circle, styled as p } from "panda/jsx";
 import { useNavigate } from "react-router";
 import syskenLogo from "@/assets/images/sysken_logo.svg";
 import { Button } from "./recipes/atomic/Button";
@@ -12,17 +12,20 @@ export default function Header(): ReactElement {
   };
 
   return (
-    <Box>
+    <Box bg="mv4-primaryContainer" display="flex" h="90px" justifyContent="space-between" padding="12px 28px">
       <Box alignItems="center" display="flex" gap="8">
-        <img
-          alt="システム研究会ロゴ"
-          onClick={() => {
-            handleNavigation("/");
-          }}
-          src={syskenLogo}
-          width="150px"
-        />
-        <h1>名簿システム</h1>
+
+        <Button onClick={() => {
+          handleNavigation("/");
+        }}
+        >
+          <p.img
+            alt="システム研究会ロゴ"
+            src={syskenLogo}
+            width="150px"
+          />
+        </Button>
+        <p.h1>名簿システム</p.h1>
       </Box>
       <Box alignItems="center" display="flex" gap="8">
         <Button onClick={() => {
@@ -43,19 +46,19 @@ export default function Header(): ReactElement {
         >
           支払い
         </Button>
-        <img
-          alt="ユーザープロフィール画像"
-          height="50px"
-          onClick={() => {
-            handleNavigation("/profile");
-          }}
-          src="https://pbs.twimg.com/profile_images/1930864387885273088/KnzR2heh_400x400.jpg"
-          style={{
-            borderRadius: "50%",
-            aspectRatio: "1/1",
-            width: "50px",
-          }}
-        />
+        <Circle>
+          <p.img
+            alt="ユーザープロフィール画像"
+            aspectRatio="1 / 1"
+            height="50px"
+            onClick={() => {
+              handleNavigation("/profile");
+            }}
+            rounded="50%"
+            src="https://pbs.twimg.com/profile_images/1930864387885273088/KnzR2heh_400x400.jpg"
+            w="50px"
+          />
+        </Circle>
       </Box>
     </Box>
   );
