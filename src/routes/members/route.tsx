@@ -1,91 +1,12 @@
 import type { JSX } from "react";
+import type { ColumnDef } from "@/components/MemberTable";
 
-import { sva } from "panda/css";
 import { useState } from "react";
-import {
-  Cell,
-  Checkbox,
-  Column,
-  Row,
-  Table,
-  TableBody,
-  TableHeader,
-} from "react-aria-components";
 
-const styles = sva({
-  slots: ["container", "table", "header", "column", "lastColumn", "image", "checkbox"],
-  base: {
-    container: {
-      width: "100%",
-      display: "flex",
-      justifyContent: "center",
-    },
-    table: {
-      "width": "80%",
-      "tableLayout": "fixed",
-      "& th, & td": {
-        border: "1px solid #000",
-        borderLeft: "none",
-        borderRight: "none",
-        padding: "8px",
-      },
-    },
-    header: {
-      backgroundColor: "mv4-primaryContainer",
-    },
-    column: {
-      textAlign: "left",
-      fontSize: "lg",
-    },
-    lastColumn: {
-      textAlign: "left",
-      fontSize: "lg",
-    },
-    image: {
-      width: "50px",
-      height: "50px",
-      borderRadius: "50px",
-    },
-    checkbox: {
-      "display": "flex",
-      "alignItems": "center",
-      "gap": "8px",
-      "cursor": "pointer",
-
-      "& .checkbox-box": {
-        width: "30px",
-        height: "30px",
-        border: "2px solid #000",
-        borderRadius: "4px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexShrink: 0,
-      },
-
-      "& svg": {
-        width: "20px",
-        height: "20px",
-        stroke: "mv4-onPrimary",
-        strokeWidth: "2",
-        display: "none",
-      },
-
-      "&[data-selected] .checkbox-box": {
-        backgroundColor: "mv4-onPrimaryContainer",
-      },
-
-      "&[data-selected] svg": {
-        display: "block",
-      },
-    },
-  },
-});
+import MemberTable from "@/components/MemberTable";
 
 export default function Members(): JSX.Element {
   const icon = "https://nenex.me/assets/ira-D6gCFlkL.png";
-
-  const style = styles();
 
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [gradeSortOrder, setGradeSortOrder] = useState<"asc" | "desc">("asc");
@@ -101,24 +22,21 @@ export default function Members(): JSX.Element {
     setGradeSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
   };
 
-  const columns = [
+  const columns: ColumnDef[] = [
     {
       id: "checkbox",
-      className: style.column ?? "",
       label: "",
       isRowHeader: false,
       width: "80px",
     },
     {
       id: "icon",
-      className: style.column ?? "",
       label: "",
       isRowHeader: false,
       width: "100px",
     },
     {
       id: "grade",
-      className: style.column ?? "",
       label: (
         <span style={{ display: "flex", alignItems: "center" }}>
           学年
@@ -141,7 +59,6 @@ export default function Members(): JSX.Element {
     },
     {
       id: "studentId",
-      className: style.column ?? "",
       label: (
         <span style={{ display: "flex", alignItems: "center" }}>
           学籍番号
@@ -164,14 +81,13 @@ export default function Members(): JSX.Element {
     },
     {
       id: "name",
-      className: style.column ?? "",
       label: "氏名",
       isRowHeader: false,
       width: "150px",
+
     },
     {
       id: "space",
-      className: style.lastColumn ?? "",
       label: "",
       isRowHeader: false,
       width: "auto",
@@ -201,64 +117,8 @@ export default function Members(): JSX.Element {
     });
 
   return (
-    <div className={style.container}>
-      <div style={{ marginBottom: "16px", display: "flex", gap: "8px" }}>
-
-      </div>
-      <Table aria-label="Files" className={style.table ?? ""}>
-        <TableHeader className={style.header ?? ""}>
-          {columns.map((col) => (
-            <Column
-              className={col.className}
-              isRowHeader={col.isRowHeader}
-              key={col.id}
-              style={{
-                width: col.width,
-                cursor: "pointer",
-              }}
-            >
-              <div
-                onClick={col.onClick}
-              >
-                {col.label}
-              </div>
-            </Column>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {filteredAndSortedData.map((member) => (
-            <Row
-              key={member.id}
-              style={{ cursor: "pointer" }}
-            >
-              <Cell>
-                <Checkbox className={style.checkbox ?? ""}>
-                  <div className="checkbox-box">
-                    <svg aria-hidden="true" viewBox="0 0 18 18">
-                      <polyline points="1 9 7 14 15 4" />
-                    </svg>
-                  </div>
-                </Checkbox>
-              </Cell>
-              <Cell>
-                <img
-                  alt="userIcon"
-                  className={style.image}
-                  src={member.icon}
-                />
-              </Cell>
-              <Cell>{member.grade}</Cell>
-              <Cell
-                style={{ cursor: "pointer" }}
-              >
-                {member.studentId}
-              </Cell>
-              <Cell>{member.name}</Cell>
-              <Cell>{member.space}</Cell>
-            </Row>
-          ))}
-        </TableBody>
-      </Table>
+    <div>
+      <MemberTable columns={columns} data={filteredAndSortedData} />
     </div>
   );
 }
