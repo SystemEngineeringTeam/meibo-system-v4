@@ -4,6 +4,7 @@ import { sva } from "panda/css";
 import { useState } from "react";
 import {
   Cell,
+  Checkbox,
   Column,
   Row,
   Table,
@@ -12,7 +13,7 @@ import {
 } from "react-aria-components";
 
 const styles = sva({
-  slots: ["container", "table", "header", "column", "lastColumn", "image"],
+  slots: ["container", "table", "header", "column", "lastColumn", "image", "checkbox"],
   base: {
     container: {
       width: "100%",
@@ -45,6 +46,39 @@ const styles = sva({
       height: "50px",
       borderRadius: "50px",
     },
+    checkbox: {
+      "display": "flex",
+      "alignItems": "center",
+      "gap": "8px",
+      "cursor": "pointer",
+
+      "& .checkbox-box": {
+        width: "30px",
+        height: "30px",
+        border: "2px solid #000",
+        borderRadius: "4px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexShrink: 0,
+      },
+
+      "& svg": {
+        width: "20px",
+        height: "20px",
+        stroke: "mv4-onPrimary",
+        strokeWidth: "2",
+        display: "none",
+      },
+
+      "&[data-selected] .checkbox-box": {
+        backgroundColor: "mv4-onPrimaryContainer",
+      },
+
+      "&[data-selected] svg": {
+        display: "block",
+      },
+    },
   },
 });
 
@@ -68,6 +102,13 @@ export default function Members(): JSX.Element {
   };
 
   const columns = [
+    {
+      id: "checkbox",
+      className: style.column ?? "",
+      label: "",
+      isRowHeader: false,
+      width: "80px",
+    },
     {
       id: "icon",
       className: style.column ?? "",
@@ -164,6 +205,15 @@ export default function Members(): JSX.Element {
               key={member.id}
               style={{ cursor: "pointer" }}
             >
+              <Cell>
+                <Checkbox className={style.checkbox ?? ""}>
+                  <div className="checkbox-box">
+                    <svg aria-hidden="true" viewBox="0 0 18 18">
+                      <polyline points="1 9 7 14 15 4" />
+                    </svg>
+                  </div>
+                </Checkbox>
+              </Cell>
               <Cell>
                 <img
                   alt="userIcon"
