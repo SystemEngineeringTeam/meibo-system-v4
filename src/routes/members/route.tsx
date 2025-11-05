@@ -119,7 +119,20 @@ export default function Members(): JSX.Element {
     {
       id: "grade",
       className: style.column ?? "",
-      label: "学年",
+      label: (
+        <span style={{ display: "flex", alignItems: "center" }}>
+          学年
+          {
+            gradeSortOrder === "asc"
+              ? (
+                  <IconMaterialSymbolsArrowDropUp />
+                )
+              : (
+                  <IconMaterialSymbolsArrowDropDown />
+                )
+          }
+        </span>
+      ),
       isRowHeader: true,
       width: "120px",
       onClick: (): void => {
@@ -129,7 +142,20 @@ export default function Members(): JSX.Element {
     {
       id: "studentId",
       className: style.column ?? "",
-      label: "学籍番号",
+      label: (
+        <span style={{ display: "flex", alignItems: "center" }}>
+          学籍番号
+          {
+            sortOrder === "asc"
+              ? (
+                  <IconMaterialSymbolsArrowDropUp />
+                )
+              : (
+                  <IconMaterialSymbolsArrowDropDown />
+                )
+          }
+        </span>
+      ),
       isRowHeader: false,
       width: "150px",
       onClick: (): void => {

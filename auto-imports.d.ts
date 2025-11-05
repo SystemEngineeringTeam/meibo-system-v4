@@ -6,5 +6,6 @@
 // biome-ignore lint: disable
 export {}
 declare global {
-
+  const IconMaterialSymbolsArrowDropDown: typeof import('~icons/material-symbols/arrow-drop-down.jsx')['default']
+  const IconMaterialSymbolsArrowDropUp: typeof import('~icons/material-symbols/arrow-drop-up.jsx')['default']
 }
