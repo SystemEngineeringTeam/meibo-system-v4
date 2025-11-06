@@ -65,13 +65,15 @@ const styles = sva({
       "& svg": {
         width: "20px",
         height: "20px",
+        fill: "mv4-primary",
         stroke: "mv4-onPrimary",
-        strokeWidth: "2",
+        strokeWidth: "3",
         display: "none",
+        strokeDashoffset: 66,
       },
 
       "&[data-selected] .checkbox-box": {
-        backgroundColor: "mv4-onPrimaryContainer",
+        backgroundColor: "mv4-primary",
       },
 
       "&[data-selected] svg": {
@@ -83,10 +85,11 @@ const styles = sva({
 
 export type ColumnDef = {
   id: string;
-  label: string | JSX.Element;
+  label: string;
   isRowHeader: boolean;
   width?: string;
-  onClick?: () => void;
+  sortable?: boolean;
+  sortKey?: string;
 };
 
 export type MemberData = {
@@ -101,10 +104,19 @@ export type MemberData = {
 type MemberTableProps = {
   columns: ColumnDef[];
   data: MemberData[];
+  onSort: (sortKey: string) => void;
+  sortedBy: string;
+  sortOrder: "asc" | "desc";
 };
 
-export default function MemberTable({ columns, data }: MemberTableProps): JSX.Element {
+export default function MemberTable({ columns, data, onSort, sortedBy, sortOrder }: MemberTableProps): JSX.Element {
   const style = styles();
+
+  const handleColumnClick = (col: ColumnDef): void => {
+    if (col.sortable === true && col.sortKey !== undefined && col.sortKey !== "" && onSort !== undefined) {
+      onSort(col.sortKey);
+    }
+  };
 
   return (
     <div className={style.container}>
@@ -114,13 +126,22 @@ export default function MemberTable({ columns, data }: MemberTableProps): JSX.El
             <Column
               isRowHeader={col.isRowHeader ?? false}
               key={col.id}
-              style={{
-                width: col.width,
-                cursor: "pointer",
+              onClick={(): void => {
+                handleColumnClick(col);
               }}
+              style={{ width: col.width, cursor: col.sortable === true ? "pointer" : "default" }}
             >
-              <div className={style.column ?? ""} onClick={col.onClick}>
+              <div className={style.column ?? ""} style={{ display: "flex", alignItems: "center" }}>
                 {col.label}
+                {col.sortable === true && (sortedBy === "" || col.sortKey === sortedBy) && (
+                  sortOrder === "asc"
+                    ? (
+                        <IconMaterialSymbolsArrowDropUp />
+                      )
+                    : (
+                        <IconMaterialSymbolsArrowDropDown />
+                      )
+                )}
               </div>
             </Column>
           ))}
@@ -133,7 +154,12 @@ export default function MemberTable({ columns, data }: MemberTableProps): JSX.El
             >
               <Cell>
                 <Checkbox className={style.checkbox ?? ""}>
-                  <div className="checkbox-box">
+                  <div
+                    className="checkbox-box"
+                    onClick={(e): void => {
+                      e.stopPropagation();
+                    }}
+                  >
                     <svg aria-hidden="true" viewBox="0 0 18 18">
                       <polyline points="1 9 7 14 15 4" />
                     </svg>
@@ -141,16 +167,10 @@ export default function MemberTable({ columns, data }: MemberTableProps): JSX.El
                 </Checkbox>
               </Cell>
               <Cell>
-                <img
-                  alt="userIcon"
-                  className={style.image}
-                  src={member.icon}
-                />
+                <img alt="Member Icon" className={style.image ?? ""} src={member.icon} />
               </Cell>
               <Cell>{member.grade}</Cell>
-              <Cell>
-                {member.studentId}
-              </Cell>
+              <Cell>{member.studentId}</Cell>
               <Cell>{member.name}</Cell>
               <Cell>{member.space}</Cell>
             </Row>

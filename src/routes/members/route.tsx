@@ -8,18 +8,16 @@ import MemberTable from "@/components/MemberTable";
 export default function Members(): JSX.Element {
   const icon = "https://nenex.me/assets/ira-D6gCFlkL.png";
 
+  const [sortedBy, setSortedBy] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  const [gradeSortOrder, setGradeSortOrder] = useState<"asc" | "desc">("asc");
-  const [sortedBy, setSortedBy] = useState<"studentId" | "grade">("studentId");
 
-  const handleStudentIdClick = (): void => {
-    setSortedBy("studentId");
-    setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
-  };
-
-  const handleGradeClick = (): void => {
-    setSortedBy("grade");
-    setGradeSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+  const handleSort = (sortKey: string): void => {
+    if (sortedBy === sortKey) {
+      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortedBy(sortKey);
+      setSortOrder("asc");
+    }
   };
 
   const columns: ColumnDef[] = [
@@ -37,57 +35,28 @@ export default function Members(): JSX.Element {
     },
     {
       id: "grade",
-      label: (
-        <span style={{ display: "flex", alignItems: "center" }}>
-          学年
-          {
-            gradeSortOrder === "asc"
-              ? (
-                  <IconMaterialSymbolsArrowDropUp />
-                )
-              : (
-                  <IconMaterialSymbolsArrowDropDown />
-                )
-          }
-        </span>
-      ),
+      label: "学年",
       isRowHeader: true,
       width: "120px",
-      onClick: (): void => {
-        handleGradeClick();
-      },
+      sortable: true,
+      sortKey: "grade",
     },
     {
       id: "studentId",
-      label: (
-        <span style={{ display: "flex", alignItems: "center" }}>
-          学籍番号
-          {
-            sortOrder === "asc"
-              ? (
-                  <IconMaterialSymbolsArrowDropUp />
-                )
-              : (
-                  <IconMaterialSymbolsArrowDropDown />
-                )
-          }
-        </span>
-      ),
+      label: "学籍番号",
       isRowHeader: false,
       width: "150px",
-      onClick: (): void => {
-        handleStudentIdClick();
-      },
+      sortable: true,
+      sortKey: "studentId",
     },
     {
       id: "name",
       label: "氏名",
       isRowHeader: false,
       width: "150px",
-
     },
     {
-      id: "space",
+      id: "space", // これがないと表の幅がいい感じにできなかった
       label: "",
       isRowHeader: false,
       width: "auto",
@@ -107,18 +76,30 @@ export default function Members(): JSX.Element {
   // フィルタリングとソート
   const filteredAndSortedData = tableData
     .sort((a, b) => {
-      if (sortedBy === "grade") {
-        const comparison = a.grade.localeCompare(b.grade);
-        return gradeSortOrder === "asc" ? comparison : -comparison;
-      } else {
-        const comparison = a.studentId.localeCompare(b.studentId);
+      if (sortedBy === "") {
+        return 0;
+      }
+
+      const aValue = a[sortedBy as keyof typeof a];
+      const bValue = b[sortedBy as keyof typeof b];
+
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        const comparison = aValue.localeCompare(bValue);
         return sortOrder === "asc" ? comparison : -comparison;
       }
+
+      return 0;
     });
 
   return (
     <div>
-      <MemberTable columns={columns} data={filteredAndSortedData} />
+      <MemberTable
+        columns={columns}
+        data={filteredAndSortedData}
+        onSort={handleSort}
+        sortOrder={sortOrder}
+        sortedBy={sortedBy}
+      />
     </div>
   );
 }
