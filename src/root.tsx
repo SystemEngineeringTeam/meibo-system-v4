@@ -7,6 +7,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import Header from "./components/Header";
 import { Expanded } from "./components/recipes/atomic/Expanded";
 import fonts from "./styles/fonts.css?url";
 import index from "./styles/index.css?url";
@@ -35,6 +36,7 @@ export function Layout({ children }: { children: ReactNode }): ReactElement {
         <Links />
       </head>
       <body>
+        <Header />
         {children}
         <ScrollRestoration />
         <Scripts />
