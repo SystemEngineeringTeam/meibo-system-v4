@@ -3,19 +3,22 @@ import { styled as p } from "panda/jsx";
 
 export const cvaButton = cva({
   base: {
-    colorPalette: "primary",
-    py: "2",
-    px: "4",
-    rounded: "md",
-    cursor: "pointer",
-    _disabled: {
+    "colorPalette": "mv4-primary",
+    "py": "10",
+    "px": "15",
+    "borderRadius": "10px",
+    "cursor": "pointer",
+    "_disabled": {
       cursor: "not-allowed",
       opacity: 0.4,
     },
-    _enabled: {
+    "_enabled": {
       _hover: {
         bg: "colorPalette/10",
       },
+    },
+    "& svg": {
+      transform: "translateY(1.5px)",
     },
   },
   variants: {
@@ -42,6 +45,16 @@ export const cvaButton = cva({
         color: "colorPalette",
         _enabled: { _hover: { bg: "colorPalette/10" } },
       },
+      danger: {
+        bg: "mv4-error",
+        color: "mv4-background",
+        _enabled: { _hover: { bg: "mv4-error/90" } },
+      },
+      dangerLight: {
+        bg: "mv4-errorContainer",
+        color: "mv4-onBackground",
+        _enabled: { _hover: { bg: "mv4-errorContainer/90" } },
+      },
     },
     size: {
       sm: {
@@ -51,18 +64,6 @@ export const cvaButton = cva({
       },
       md: {
         fontSize: "md",
-      },
-    },
-    animateOnHover: {
-      true: {
-        "& svg": {
-          transition: "transform 0.2s",
-        },
-        "_hover": {
-          "& svg": {
-            transform: "translateX(1px) translateY(-1px)",
-          },
-        },
       },
     },
   },
