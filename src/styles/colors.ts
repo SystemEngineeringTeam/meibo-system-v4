@@ -40,10 +40,13 @@ const semanticTonePair = {
   inverseSurface: { palette: "n1", tone: [20, 90] },
   inverseOnSurface: { palette: "n1", tone: [95, 20] },
   inversePrimary: { palette: "a1", tone: [80, 40] },
-} as const satisfies Record<string, {
-  palette: keyof typeof palettePair;
-  tone: [number, number];
-}>;
+} as const satisfies Record<
+  string,
+  {
+    palette: keyof typeof palettePair;
+    tone: [number, number];
+  }
+>;
 
 type InputPalettes = {
   [key: string]: Record<string, string>;
