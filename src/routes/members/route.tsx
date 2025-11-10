@@ -1,11 +1,18 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import type { JSX } from "react";
-import type { MemberData } from "@/components/table";
 import { useCallback, useMemo, useState } from "react";
 import IconMaterialSymbolsArrowDropDown from "~icons/material-symbols/arrow-drop-down";
 
 import IconMaterialSymbolsArrowDropUp from "~icons/material-symbols/arrow-drop-up";
 import MemberTable from "@/components/table";
+
+type MemberData = {
+  id: string;
+  grade: string;
+  icon: string;
+  studentId: string;
+  name: string;
+};
 
 export default function Members(): JSX.Element {
   const icon = "https://nenex.me/assets/ira-D6gCFlkL.png";

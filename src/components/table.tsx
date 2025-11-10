@@ -81,23 +81,15 @@ const styles = sva({
   },
 });
 
-export type MemberData = {
-  id: string;
-  grade: string;
-  icon: string;
-  studentId: string;
-  name: string;
-};
-
-type MemberTableProps = {
-  columns: Array<TanStackColumnDef<MemberData>>;
-  data: MemberData[];
+type MemberTableProps<TData extends Record<string, unknown>> = {
+  columns: Array<TanStackColumnDef<TData>>;
+  data: TData[];
   onSort?: (sortKey: string) => void;
   sortedBy?: string;
   sortOrder?: "asc" | "desc";
 };
 
-export default function MemberTable({ columns, data }: MemberTableProps): JSX.Element {
+export default function MemberTable<TData extends Record<string, unknown>>({ columns, data }: MemberTableProps<TData>): JSX.Element {
   const style = styles();
 
   const table = useReactTable({
