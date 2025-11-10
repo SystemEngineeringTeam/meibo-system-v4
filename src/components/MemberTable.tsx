@@ -1,15 +1,13 @@
-import type { JSX } from "react";
+import type { ColumnDef as TanStackColumnDef } from "@tanstack/react-table";
 
-import { sva } from "panda/css";
+import type { JSX } from "react";
 import {
-  Cell,
-  Checkbox,
-  Column,
-  Row,
-  Table,
-  TableBody,
-  TableHeader,
-} from "react-aria-components";
+  flexRender,
+  getCoreRowModel,
+
+  useReactTable,
+} from "@tanstack/react-table";
+import { sva } from "panda/css";
 
 const styles = sva({
   slots: ["container", "table", "header", "column", "lastColumn", "image", "checkbox"],
@@ -83,15 +81,6 @@ const styles = sva({
   },
 });
 
-export type ColumnDef = {
-  id: string;
-  label: string;
-  isRowHeader: boolean;
-  width?: string;
-  sortable?: boolean;
-  sortKey?: string;
-};
-
 export type MemberData = {
   id: string;
   grade: string;
@@ -102,81 +91,48 @@ export type MemberData = {
 };
 
 type MemberTableProps = {
-  columns: ColumnDef[];
+  columns: Array<TanStackColumnDef<MemberData>>;
   data: MemberData[];
-  onSort: (sortKey: string) => void;
-  sortedBy: string;
-  sortOrder: "asc" | "desc";
+  onSort?: (sortKey: string) => void;
+  sortedBy?: string;
+  sortOrder?: "asc" | "desc";
 };
 
-export default function MemberTable({ columns, data, onSort, sortedBy, sortOrder }: MemberTableProps): JSX.Element {
+export default function MemberTable({ columns, data }: MemberTableProps): JSX.Element {
   const style = styles();
 
-  const handleColumnClick = (col: ColumnDef): void => {
-    if (col.sortable === true && col.sortKey !== undefined && col.sortKey !== "" && onSort !== undefined) {
-      onSort(col.sortKey);
-    }
-  };
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   return (
     <div className={style.container}>
-      <Table aria-label="Members" className={style.table ?? ""}>
-        <TableHeader className={style.header ?? ""}>
-          {columns.map((col) => (
-            <Column
-              isRowHeader={col.isRowHeader ?? false}
-              key={col.id}
-              onClick={(): void => {
-                handleColumnClick(col);
-              }}
-              style={{ width: col.width, cursor: col.sortable === true ? "pointer" : "default" }}
-            >
-              <div className={style.column ?? ""} style={{ display: "flex", alignItems: "center" }}>
-                {col.label}
-                {col.sortable === true && (sortedBy === "" || col.sortKey === sortedBy) && (
-                  sortOrder === "asc"
-                    ? (
-                        <IconMaterialSymbolsArrowDropUp />
-                      )
-                    : (
-                        <IconMaterialSymbolsArrowDropDown />
-                      )
-                )}
-              </div>
-            </Column>
+      <table aria-label="Members" className={style.table ?? ""}>
+        <thead className={style.header ?? ""}>
+          {table.getHeaderGroups().map((hg) => (
+            <tr key={hg.id}>
+              {hg.headers.map((header) => (
+                <th className={style.column ?? ""} key={header.id}>
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                </th>
+              ))}
+            </tr>
           ))}
-        </TableHeader>
-        <TableBody>
-          {data.map((member) => (
-            <Row
-              key={member.id}
-              style={{ cursor: "pointer" }}
-            >
-              <Cell>
-                <Checkbox className={style.checkbox ?? ""}>
-                  <div
-                    className="checkbox-box"
-                    onClick={(e): void => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    <svg aria-hidden="true" viewBox="0 0 18 18">
-                      <polyline points="1 9 7 14 15 4" />
-                    </svg>
-                  </div>
-                </Checkbox>
-              </Cell>
-              <Cell>
-                <img alt="Member Icon" className={style.image ?? ""} src={member.icon} />
-              </Cell>
-              <Cell>{member.grade}</Cell>
-              <Cell>{member.studentId}</Cell>
-              <Cell>{member.name}</Cell>
-              <Cell>{member.space}</Cell>
-            </Row>
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id} style={{ cursor: "pointer" }}>
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
           ))}
-        </TableBody>
-      </Table>
+        </tbody>
+      </table>
     </div>
   );
 }
