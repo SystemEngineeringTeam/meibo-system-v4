@@ -21,15 +21,34 @@ export default function Members(): JSX.Element {
       setSortOrder("asc");
     }
   }, [sortedBy]);
+  const [, setSelectedRows] = useState<Set<string>>(); // 選択された行のIDを管理←これでuserの削除など
+
+  const handleRowSelection = useCallback((id: string, isChecked: boolean): void => {
+    setSelectedRows((prev) => {
+      const updated = new Set(prev);
+      if (isChecked) {
+        updated.add(id);
+      } else {
+        updated.delete(id);
+      }
+      return updated;
+    });
+  }, []);
 
   const columns = useMemo<Array<ColumnDef<MemberData>>>(
     () => [
       {
         id: "checkbox",
         header: (): string => "",
-        cell: (): JSX.Element => (
+        cell: ({ row }): JSX.Element => (
           <div>
-            <input style={{ width: "30px", height: "20px" }} type="checkbox" />
+            <input
+              onChange={(e) => {
+                handleRowSelection(row.original.id, e.target.checked);
+              }}
+              style={{ width: "30px", height: "20px" }}
+              type="checkbox"
+            />
           </div>
         ),
         size: 10,
@@ -93,7 +112,7 @@ export default function Members(): JSX.Element {
         size: 200,
       },
     ],
-    [sortedBy, sortOrder, handleSort],
+    [sortedBy, sortOrder, handleSort, handleRowSelection],
   );
 
   // テーブルのデータ
