@@ -4,17 +4,20 @@ import type { JSX } from "react";
 import {
   flexRender,
   getCoreRowModel,
-
+  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { sva } from "panda/css";
 
 const styles = sva({
-  slots: ["container", "table", "header", "column", "lastColumn", "image", "checkbox"],
+  slots: ["container", "table", "header", "column", "lastColumn", "image", "checkbox", "pagination", "pageButton", "activePageButton", "pageInfo"],
   base: {
     container: {
+      marginBlock: "30px",
       width: "100%",
       display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
       justifyContent: "center",
     },
     table: {
@@ -34,49 +37,46 @@ const styles = sva({
       textAlign: "left",
       fontSize: "lg",
     },
-    lastColumn: {
-      textAlign: "left",
-      fontSize: "lg",
-    },
     image: {
       width: "50px",
       height: "50px",
       borderRadius: "50px",
     },
-    checkbox: {
-      "display": "flex",
-      "alignItems": "center",
-      "gap": "8px",
-      "cursor": "pointer",
-
-      "& .checkbox-box": {
-        width: "30px",
-        height: "30px",
-        border: "2px solid #000",
-        borderRadius: "4px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexShrink: 0,
+    pagination: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      gap: "10px",
+      marginTop: "20px",
+      padding: "0",
+    },
+    pageButton: {
+      display: "block",
+      width: "fit-content",
+      padding: "7px 14px",
+      borderRadius: "50px",
+      border: "1px solid #2C638B",
+      cursor: "pointer",
+      color: "mv4-primary",
+      background: "mv4-onPrimary",
+      _disabled: {
+        opacity: 0.5,
+        cursor: "not-allowed",
       },
-
-      "& svg": {
-        width: "20px",
-        height: "20px",
-        fill: "mv4-primary",
-        stroke: "mv4-onPrimary",
-        strokeWidth: "3",
-        display: "none",
-        strokeDashoffset: 66,
-      },
-
-      "&[data-selected] .checkbox-box": {
-        backgroundColor: "mv4-primary",
-      },
-
-      "&[data-selected] svg": {
-        display: "block",
-      },
+    },
+    activePageButton: {
+      display: "block",
+      width: "fit-content",
+      bg: "mv4-primary",
+      border: "1px solid #2C638B",
+      color: "mv4-onPrimary",
+      padding: "7px 14px",
+      borderRadius: "50px",
+      cursor: "pointer",
+    },
+    pageInfo: {
+      padding: "7px 14px",
+      color: "mv4-primary",
     },
   },
 });
@@ -87,7 +87,6 @@ export type MemberData = {
   icon: string;
   studentId: string;
   name: string;
-  space: string;
 };
 
 type MemberTableProps = {
@@ -105,6 +104,12 @@ export default function MemberTable({ columns, data }: MemberTableProps): JSX.El
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 20,
+      },
+    },
   });
 
   return (
@@ -114,7 +119,13 @@ export default function MemberTable({ columns, data }: MemberTableProps): JSX.El
           {table.getHeaderGroups().map((hg) => (
             <tr key={hg.id}>
               {hg.headers.map((header) => (
-                <th className={style.column ?? ""} key={header.id}>
+                <th
+                  className={style.column ?? ""}
+                  key={header.id}
+                  style={{
+                    width: header.getSize(),
+                  }}
+                >
                   {flexRender(header.column.columnDef.header, header.getContext())}
                 </th>
               ))}
@@ -133,6 +144,37 @@ export default function MemberTable({ columns, data }: MemberTableProps): JSX.El
           ))}
         </tbody>
       </table>
+
+      <div className={style.pagination ?? ""}>
+        <button
+          className={style.pageButton ?? ""}
+          disabled={!table.getCanPreviousPage()}
+          onClick={() => {
+            table.previousPage();
+          }}
+          type="button"
+        >
+          {"<"}
+        </button>
+        <span className={style.pageInfo ?? ""}>
+          ページ
+          {table.getState().pagination.pageIndex + 1}
+          {" "}
+          /
+          {" "}
+          {table.getPageCount()}
+        </span>
+        <button
+          className={style.pageButton ?? ""}
+          disabled={!table.getCanNextPage()}
+          onClick={() => {
+            table.nextPage();
+          }}
+          type="button"
+        >
+          {">"}
+        </button>
+      </div>
     </div>
   );
 }

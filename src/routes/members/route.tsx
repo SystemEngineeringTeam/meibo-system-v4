@@ -12,8 +12,6 @@ export default function Members(): JSX.Element {
 
   const [sortedBy, setSortedBy] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  // const [start, setStart] = useState<number>(0);
-  // const perPage = 3; // 1ページあたりの表示件数
 
   const handleSort = useCallback((sortKey: string): void => {
     if (sortedBy === sortKey) {
@@ -31,10 +29,10 @@ export default function Members(): JSX.Element {
         header: (): string => "",
         cell: (): JSX.Element => (
           <div>
-            <input type="checkbox" />
+            <input style={{ width: "30px", height: "20px" }} type="checkbox" />
           </div>
         ),
-        size: 80,
+        size: 10,
       },
       {
         id: "icon",
@@ -46,7 +44,7 @@ export default function Members(): JSX.Element {
             style={{ width: "50px", height: "50px", borderRadius: "50px" }}
           />
         ),
-        size: 100,
+        size: 25,
       },
       {
         accessorKey: "grade",
@@ -66,7 +64,7 @@ export default function Members(): JSX.Element {
           </div>
         ),
         cell: ({ getValue }): string => getValue() as string,
-        size: 120,
+        size: 30,
       },
       {
         accessorKey: "studentId",
@@ -86,18 +84,13 @@ export default function Members(): JSX.Element {
           </div>
         ),
         cell: ({ getValue }): string => getValue() as string,
-        size: 150,
+        size: 30,
       },
       {
         accessorKey: "name",
         header: (): string => "氏名",
         cell: ({ getValue }): string => getValue() as string,
-        size: 150,
-      },
-      {
-        id: "space",
-        header: (): string => "",
-        cell: (): string => "",
+        size: 200,
       },
     ],
     [sortedBy, sortOrder, handleSort],
@@ -105,30 +98,30 @@ export default function Members(): JSX.Element {
 
   // テーブルのデータ
   const tableData = [
-    { id: "1", grade: "B3", icon, studentId: "K24015", name: "石丸凜弥", space: "" },
-    { id: "2", grade: "B4", icon, studentId: "K24115", name: "加藤まさし", space: "" },
-    { id: "3", grade: "B2", icon, studentId: "X24015", name: "愛工太郎", space: "" },
-    { id: "4", grade: "B1", icon, studentId: "V24125", name: "矢部大地", space: "" },
-    { id: "5", grade: "B4", icon, studentId: "V24115", name: "町田わたる", space: "" },
-    { id: "6", grade: "M1", icon, studentId: "K24015", name: "石丸凜弥", space: "" },
-    { id: "7", grade: "B2", icon, studentId: "K24016", name: "佐藤健", space: "" },
-    { id: "8", grade: "B3", icon, studentId: "K24017", name: "田中花子", space: "" },
-    { id: "9", grade: "B1", icon, studentId: "K24018", name: "山田太郎", space: "" },
-    { id: "10", grade: "M2", icon, studentId: "K24019", name: "鈴木一郎", space: "" },
-    { id: "11", grade: "B4", icon, studentId: "K24020", name: "高橋優", space: "" },
-    { id: "12", grade: "B3", icon, studentId: "K24021", name: "中村美咲", space: "" },
-    { id: "13", grade: "B2", icon, studentId: "K24022", name: "小林翔", space: "" },
-    { id: "14", grade: "B1", icon, studentId: "K24023", name: "松本花", space: "" },
-    { id: "15", grade: "M1", icon, studentId: "K24024", name: "伊藤健太", space: "" },
-    { id: "16", grade: "B4", icon, studentId: "K24025", name: "渡辺優子", space: "" },
-    { id: "17", grade: "B3", icon, studentId: "K24026", name: "山本太郎", space: "" },
-    { id: "18", grade: "B2", icon, studentId: "K24027", name: "中島美咲", space: "" },
-    { id: "19", grade: "B1", icon, studentId: "K24028", name: "高橋一郎", space: "" },
-    { id: "20", grade: "M2", icon, studentId: "K24029", name: "佐々木花子", space: "" },
-    { id: "21", grade: "B4", icon, studentId: "K24030", name: "藤田健", space: "" },
-    { id: "22", grade: "B3", icon, studentId: "K24031", name: "岡田優", space: "" },
-    { id: "23", grade: "B2", icon, studentId: "K24032", name: "村上翔太", space: "" },
-    { id: "24", grade: "B1", icon, studentId: "K24033", name: "石井花", space: "" },
+    { id: "1", grade: "B3", icon, studentId: "K24015", name: "石丸凜弥" },
+    { id: "2", grade: "B4", icon, studentId: "K24115", name: "加藤まさし" },
+    { id: "3", grade: "B2", icon, studentId: "X24015", name: "愛工太郎" },
+    { id: "4", grade: "B1", icon, studentId: "V24125", name: "矢部大地" },
+    { id: "5", grade: "B4", icon, studentId: "V24115", name: "町田わたる" },
+    { id: "6", grade: "M1", icon, studentId: "K24015", name: "石丸凜弥" },
+    { id: "7", grade: "B2", icon, studentId: "K24016", name: "佐藤健" },
+    { id: "8", grade: "B3", icon, studentId: "K24017", name: "田中花子" },
+    { id: "9", grade: "B1", icon, studentId: "K24018", name: "山田太郎" },
+    { id: "10", grade: "M2", icon, studentId: "K24019", name: "鈴木一郎" },
+    { id: "11", grade: "B4", icon, studentId: "K24020", name: "高橋優" },
+    { id: "12", grade: "B3", icon, studentId: "K24021", name: "中村美咲" },
+    { id: "13", grade: "B2", icon, studentId: "K24022", name: "小林翔" },
+    { id: "14", grade: "B1", icon, studentId: "K24023", name: "松本花" },
+    { id: "15", grade: "M1", icon, studentId: "K24024", name: "伊藤健太" },
+    { id: "16", grade: "B4", icon, studentId: "K24025", name: "渡辺優子" },
+    { id: "17", grade: "B3", icon, studentId: "K24026", name: "山本太郎" },
+    { id: "18", grade: "B2", icon, studentId: "K24027", name: "中島美咲" },
+    { id: "19", grade: "B1", icon, studentId: "K24028", name: "高橋一郎" },
+    { id: "20", grade: "M2", icon, studentId: "K24029", name: "佐々木花子" },
+    { id: "21", grade: "B4", icon, studentId: "K24030", name: "藤田健" },
+    { id: "22", grade: "B3", icon, studentId: "K24031", name: "岡田優" },
+    { id: "23", grade: "B2", icon, studentId: "K24032", name: "村上翔太" },
+    { id: "24", grade: "B1", icon, studentId: "K24033", name: "石井花" },
   ];
 
   // フィルタリングとソート
@@ -149,8 +142,6 @@ export default function Members(): JSX.Element {
       return 0;
     });
 
-  // const currentPageData = filteredAndSortedData.slice(start, start + perPage);
-
   return (
     <div>
       <MemberTable
@@ -160,14 +151,6 @@ export default function Members(): JSX.Element {
         sortOrder={sortOrder}
         sortedBy={sortedBy}
       />
-
-      {/* <PageNation
-        data={filteredAndSortedData}
-        onPageChange={(data: { selected: number }) => {
-          setStart(data.selected * perPage);
-        }}
-        perPage={perPage}
-      /> */}
     </div>
   );
 }
