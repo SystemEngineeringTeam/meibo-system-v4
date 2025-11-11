@@ -192,6 +192,11 @@ export default function Payments(): JSX.Element {
         return sortOrder === "asc" ? comparison : -comparison;
       }
 
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        const comparison = aValue - bValue;
+        return sortOrder === "asc" ? comparison : -comparison;
+      }
+
       return 0;
     });
 
