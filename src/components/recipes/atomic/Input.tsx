@@ -29,3 +29,4 @@ export const cvaInput = cva({
 });
 
 export const Input = p("input", cvaInput);
+export const Select = p("select", cvaInput);
