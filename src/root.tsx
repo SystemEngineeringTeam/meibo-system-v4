@@ -29,7 +29,8 @@ export function HydrateFallback(): ReactElement {
 
 export function Layout({ children }: { children: ReactNode }): ReactElement {
   const location = useLocation();
-  const shouldShowHeader = location.pathname !== "/registration";
+  const shouldShowHeader
+    = location.pathname !== "/registration" && location.pathname !== "/";
 
   return (
     <html lang="ja">
@@ -40,7 +41,7 @@ export function Layout({ children }: { children: ReactNode }): ReactElement {
         <Links />
       </head>
       <body>
-        {shouldShowHeader && <Header />}
+        {!!shouldShowHeader && <Header />}
         {children}
         <ScrollRestoration />
         <Scripts />
