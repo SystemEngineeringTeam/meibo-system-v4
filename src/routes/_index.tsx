@@ -1,14 +1,19 @@
 import type { ReactElement } from "react";
-import { styled as p } from "panda/jsx";
+import { useNavigate } from "react-router";
 import { Button } from "@/components/recipes/atomic/Button";
 
 export default function (): ReactElement {
+  const navigate = useNavigate();
   return (
-    <>
-      <p.div color="mv4-primary">
-        やあ
-      </p.div>
-      <Button>hi</Button>
-    </>
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <Button
+        onClick={(): void => {
+          void navigate(`/registration`);
+        }}
+        variant="filled"
+      >
+        ログイン
+      </Button>
+    </div>
   );
 }
