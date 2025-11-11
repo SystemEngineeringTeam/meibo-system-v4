@@ -8,4 +8,7 @@ export {}
 declare global {
   const IconMaterialSymbolsArrowDropDown: typeof import('~icons/material-symbols/arrow-drop-down.jsx')['default']
   const IconMaterialSymbolsArrowDropUp: typeof import('~icons/material-symbols/arrow-drop-up.jsx')['default']
+  const IconMaterialSymbolsArrowForward: typeof import('~icons/material-symbols/arrow-forward.jsx')['default']
+  const IconMaterialSymbolsCheckCircleOutline: typeof import('~icons/material-symbols/check-circle-outline.jsx')['default']
+  const IconMaterialSymbolsLock: typeof import('~icons/material-symbols/lock.jsx')['default']
 }

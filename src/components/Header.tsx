@@ -13,7 +13,7 @@ export default function Header(): ReactElement {
   return (
     <Box bg="mv4-primaryContainer" display="flex" h="90px" justifyContent="space-between" padding="12px 28px">
       <Box alignItems="center" display="flex" gap="8">
-        <Link to="/">
+        <Link to="/members">
           <p.img
             alt="システム研究会ロゴ"
             src={syskenLogo}
