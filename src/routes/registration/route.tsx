@@ -113,7 +113,7 @@ export default function Registration(): JSX.Element {
   );
 
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column", maxWidth: "600px", margin: "0 auto" }}>
       {fields.map((field) => {
         // 非表示対象のフィールドはスキップ
         if (shouldHideField(field.id)) {

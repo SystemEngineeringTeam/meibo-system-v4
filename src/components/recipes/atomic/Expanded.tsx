@@ -21,7 +21,6 @@ export const cvaExpanded = cva({
     },
     items: {
       center: {
-        display: "grid",
         placeItems: "center",
         alignItems: "center",
       },
