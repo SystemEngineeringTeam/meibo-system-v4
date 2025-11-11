@@ -1,16 +1,18 @@
 import type { JSX } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import DatePicker from "@/components/DatePicker";
 import IconButton from "@/components/IconButton";
 import { Input } from "@/components/recipes/atomic/Input";
 import { RadioGroup } from "@/components/recipes/atomic/RadioGroup";
-import { GradeSelect, IconGraduationYearSelect } from "@/components/recipes/DomainSelects";
+import { DynamicFieldSelect, GradeSelect } from "@/components/recipes/DomainSelects";
 
 export default function Registration(): JSX.Element {
   const navigate = useNavigate();
   const [affiliation, setAffiliation] = useState<string>("");
   const [isLivingWithFamily, setIsLivingWithFamily] = useState<string>("");
   const [selectedValue, setSelectedValue] = useState<string>("");
+  const [birthday, setBirthday] = useState<string>("");
 
   const fields = [
     { id: 1, label: "名前", placeholder: "石丸凛弥" },
@@ -110,11 +112,11 @@ export default function Registration(): JSX.Element {
       }}
     >
       <p>{label}</p>
-      {(fieldId === 3)
+      {(fieldId === 3 || fieldId === 17)
         ? (
-            <IconGraduationYearSelect
-              icon={<IconMaterialSymbolsAlignFlexCenter />}
-              onChange={(e) => {
+            <DynamicFieldSelect
+              id={fieldId as number}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                 setSelectedValue(e.target.value);
               }}
               value={selectedValue}
@@ -124,9 +126,17 @@ export default function Registration(): JSX.Element {
             ? (
                 <GradeSelect />
               )
-            : (
-                <Input placeholder={placeholder} />
-              )}
+            : (fieldId === 9)
+                ? (
+                    <DatePicker
+                      onChange={setBirthday}
+                      placeholder={placeholder}
+                      value={birthday}
+                    />
+                  )
+                : (
+                    <Input placeholder={placeholder} />
+                  )}
     </div>
   );
 
