@@ -15,5 +15,7 @@ declare global {
   const IconMaterialSymbolsCheckCircleOutline: typeof import('~icons/material-symbols/check-circle-outline.jsx')['default']
   const IconMaterialSymbolsChevronLeft: typeof import('~icons/material-symbols/chevron-left.jsx')['default']
   const IconMaterialSymbolsChevronRight: typeof import('~icons/material-symbols/chevron-right.jsx')['default']
+  const IconMaterialSymbolsDoubleArrowLeft: typeof import('~icons/material-symbols/double-arrow-left.jsx')['default']
+  const IconMaterialSymbolsDoubleArrowRight: typeof import('~icons/material-symbols/double-arrow-right.jsx')['default']
   const IconMaterialSymbolsLock: typeof import('~icons/material-symbols/lock.jsx')['default']
 }
