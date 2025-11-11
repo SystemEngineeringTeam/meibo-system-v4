@@ -4,11 +4,13 @@ import { useNavigate } from "react-router";
 import IconButton from "@/components/IconButton";
 import { Input } from "@/components/recipes/atomic/Input";
 import { RadioGroup } from "@/components/recipes/atomic/RadioGroup";
+import { GradeSelect, IconGraduationYearSelect } from "@/components/recipes/DomainSelects";
 
 export default function Registration(): JSX.Element {
   const navigate = useNavigate();
   const [affiliation, setAffiliation] = useState<string>("");
   const [isLivingWithFamily, setIsLivingWithFamily] = useState<string>("");
+  const [selectedValue, setSelectedValue] = useState<string>("");
 
   const fields = [
     { id: 1, label: "名前", placeholder: "石丸凛弥" },
@@ -97,7 +99,7 @@ export default function Registration(): JSX.Element {
   );
 
   // 通常の入力フィールドのレンダリング
-  const renderInputField = (label: string, placeholder: string): JSX.Element => (
+  const renderInputField = (fieldId: number, label: string, placeholder: string): JSX.Element => (
     <div
       style={{
         padding: "20px",
@@ -108,7 +110,23 @@ export default function Registration(): JSX.Element {
       }}
     >
       <p>{label}</p>
-      <Input placeholder={placeholder} />
+      {(fieldId === 3)
+        ? (
+            <IconGraduationYearSelect
+              icon={<IconMaterialSymbolsAlignFlexCenter />}
+              onChange={(e) => {
+                setSelectedValue(e.target.value);
+              }}
+              value={selectedValue}
+            />
+          )
+        : (fieldId === 4)
+            ? (
+                <GradeSelect />
+              )
+            : (
+                <Input placeholder={placeholder} />
+              )}
     </div>
   );
 
@@ -136,7 +154,7 @@ export default function Registration(): JSX.Element {
               && field.id !== 14
               && "placeholder" in field
               && field.placeholder
-              && renderInputField(field.label, field.placeholder)}
+              && renderInputField(field.id, field.label, field.placeholder)}
 
             {/* 非公開情報の注釈 */}
             {field.id === 8 && (
