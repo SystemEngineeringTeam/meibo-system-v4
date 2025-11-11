@@ -26,7 +26,7 @@ export default function DatePicker({
 }: DatePickerProps): ReactElement {
   const [selectedDate, setSelectedDate] = useState<DateValue | null>(() => {
     if (value === null || value === undefined || value.trim() === "") {
-      return null;
+      return parseDate("2005-01-01");
     }
     return parseDate(value);
   });
