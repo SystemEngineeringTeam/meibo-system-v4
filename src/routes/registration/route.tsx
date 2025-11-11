@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import IconButton from "@/components/IconButton";
 import { Input } from "@/components/recipes/atomic/Input";
 import { RadioGroup } from "@/components/recipes/atomic/RadioGroup";
-import { GradeSelect, IconGraduationYearSelect } from "@/components/recipes/DomainSelects";
+import { DynamicFieldSelect, GradeSelect } from "@/components/recipes/DomainSelects";
 
 export default function Registration(): JSX.Element {
   const navigate = useNavigate();
@@ -110,11 +110,11 @@ export default function Registration(): JSX.Element {
       }}
     >
       <p>{label}</p>
-      {(fieldId === 3)
+      {(fieldId === 3 || fieldId === 17)
         ? (
-            <IconGraduationYearSelect
-              icon={<IconMaterialSymbolsAlignFlexCenter />}
-              onChange={(e) => {
+            <DynamicFieldSelect
+              id={fieldId as number}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                 setSelectedValue(e.target.value);
               }}
               value={selectedValue}

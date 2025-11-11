@@ -31,6 +31,10 @@ export function getGradeOptions(): string[] {
   return ["B1", "B2", "B3", "B4", "M1", "M2"];
 }
 
+export function getOfficer(): string[] {
+  return ["石丸", "加藤", "町田", "真弓"];
+}
+
 export function getInitialGrade(): string {
   return "B1";
 }
@@ -152,4 +156,57 @@ export function IconGradeSelect(
       />
     </HStack>
   );
+}
+
+// 役員Selectコンポーネント
+export function OfficerSelect(
+  props: ComponentProps<typeof Select>,
+): ReactElement {
+  const officerOptions = getOfficer();
+
+  return (
+    <Select {...props}>
+      {officerOptions.map((name) => (
+        <option key={name} value={name}>
+          {name}
+        </option>
+      ))}
+    </Select>
+  );
+}
+
+// IDに応じて表示するSelectコンポーネント
+type DynamicFieldSelectProps = {
+  id: number;
+  value: string | undefined;
+  onChange: ((e: React.ChangeEvent<HTMLSelectElement>) => void) | undefined;
+} & OmitStrict<ComponentProps<typeof Select>, "id" | "value" | "onChange">;
+
+export function DynamicFieldSelect(
+  { id, value, onChange, ...rest }: DynamicFieldSelectProps,
+): ReactElement {
+  const { value: graduationValue, onChange: graduationHandleChange } = useControlledSelect({
+    value: id === 3 ? value : undefined,
+    onChange: id === 3 ? onChange : undefined,
+    initialValue: getInitialGraduationYear(),
+  });
+
+  // id=3の場合は卒業年度
+  if (id === 3) {
+    return (
+      <GraduationYearSelect
+        {...rest}
+        onChange={graduationHandleChange}
+        value={graduationValue}
+      />
+    );
+  }
+
+  // id=17の場合は役員リスト
+  if (id === 17) {
+    return <OfficerSelect {...rest} onChange={onChange} value={value} />;
+  }
+
+  // その他のidの場合は通常のSelect
+  return <Select {...rest} onChange={onChange} value={value} />;
 }
