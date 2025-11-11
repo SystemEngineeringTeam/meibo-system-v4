@@ -11,8 +11,8 @@ import IconMaterialSymbolsArrowForward from "~icons/material-symbols/arrow-forwa
 import IconMaterialSymbolsCheck from "~icons/material-symbols/check";
 import IconMaterialSymbolsEdit from "~icons/material-symbols/edit";
 import IconMaterialSymbolsSearch from "~icons/material-symbols/search";
+import IconButton from "@/components/IconButton";
 import { Modal, ModalFooter } from "@/components/modal";
-import { Button } from "@/components/recipes/atomic/Button";
 import MemberTable from "@/components/table";
 
 type EventData = {
@@ -121,28 +121,15 @@ export default function Members(): JSX.Element {
         id: "action",
         header: (): string => "",
         cell: ({ row }): JSX.Element => (
-          <button
+          <IconButton
+            icon={<IconMaterialSymbolsArrowForward />}
             onClick={(): void => {
               void navigate(`/events/${row.original.id}`);
             }}
-            style={{
-              padding: "0.5rem 1rem",
-              backgroundColor: "#3360dd",
-              color: "white",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontSize: "0.875rem",
-              fontWeight: "600",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-            }}
-            type="button"
+            variant="filled"
           >
-            <IconMaterialSymbolsArrowForward />
-            イベントを表示
-          </button>
+            <p>イベントを表示</p>
+          </IconButton>
         ),
         size: 150,
       },
@@ -215,10 +202,9 @@ export default function Members(): JSX.Element {
                 cursor: "pointer",
               }}
             >
-              <Button style={{ display: "flex", alignItems: "center", gap: "0.5rem" }} variant="filled">
-                <IconMaterialSymbolsAdd />
-                イベントを追加
-              </Button>
+              <IconButton icon={<IconMaterialSymbolsAdd />}>
+                <p>イベントを追加</p>
+              </IconButton>
             </AriaButton>
             <Modal showCloseButton={false}>
               <form
@@ -408,31 +394,22 @@ export default function Members(): JSX.Element {
                 </div>
                 <ModalFooter>
                   <AriaButton slot="close">
-                    <Button style={{ display: "flex", alignItems: "center", gap: "0.5rem" }} variant="outlined">
-                      <IconMaterialSymbolsArrowBack />
-                      戻る
-                    </Button>
+                    <IconButton icon={<IconMaterialSymbolsArrowBack />}>
+                      <p>戻る</p>
+                    </IconButton>
                   </AriaButton>
                   <AriaButton slot="close" type="submit">
-                    <Button style={{ display: "flex", alignItems: "center", gap: "0.5rem" }} variant="filled">
-                      <IconMaterialSymbolsCheck />
-                      登録
-                    </Button>
+                    <IconButton icon={<IconMaterialSymbolsCheck />} variant="filled">
+                      <p>登録</p>
+                    </IconButton>
                   </AriaButton>
                 </ModalFooter>
               </form>
             </Modal>
           </DialogTrigger>
-          <Button
-            onClick={(): void => {
-              // 編集モード処理
-            }}
-            style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
-            variant="light"
-          >
-            <IconMaterialSymbolsEdit />
-            イベントを編集
-          </Button>
+          <IconButton icon={<IconMaterialSymbolsEdit />}>
+            <p>イベントを編集</p>
+          </IconButton>
         </div>
         <div style={{ position: "relative", width: "300px", padding: "20px" }}>
           <IconMaterialSymbolsSearch
