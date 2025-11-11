@@ -6,9 +6,12 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const IconMaterialSymbolsAlignFlexCenter: typeof import('~icons/material-symbols/align-flex-center.jsx')['default']
   const IconMaterialSymbolsArrowDropDown: typeof import('~icons/material-symbols/arrow-drop-down.jsx')['default']
+  const IconMaterialSymbolsArrowDropDownRounded: typeof import('~icons/material-symbols/arrow-drop-down-rounded.jsx')['default']
   const IconMaterialSymbolsArrowDropUp: typeof import('~icons/material-symbols/arrow-drop-up.jsx')['default']
   const IconMaterialSymbolsArrowForward: typeof import('~icons/material-symbols/arrow-forward.jsx')['default']
+  const IconMaterialSymbolsCalendarMonth: typeof import('~icons/material-symbols/calendar-month.jsx')['default']
   const IconMaterialSymbolsCheckCircleOutline: typeof import('~icons/material-symbols/check-circle-outline.jsx')['default']
   const IconMaterialSymbolsLock: typeof import('~icons/material-symbols/lock.jsx')['default']
 }
