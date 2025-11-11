@@ -5,12 +5,14 @@ import { Input } from "./recipes/atomic/Input";
 type IconInputProps = {
   startAdornment?: ReactElement;
   endAdornment?: ReactElement;
+  onAdornmentClick?: () => void;
 } & ComponentProps<typeof Input>;
 
 function IconInput(
   {
     startAdornment,
     endAdornment,
+    onAdornmentClick,
     ...rest
   }: IconInputProps,
 ): ReactElement {
@@ -45,7 +47,10 @@ function IconInput(
       {hasEndAdornment && (
         <Box
           alignItems="center"
+          cursor="pointer"
           display="flex"
+          onClick={onAdornmentClick}
+          pointerEvents="auto"
           position="absolute"
           right="13px"
           top="50%"
