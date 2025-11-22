@@ -61,4 +61,84 @@ export const globalCss: GlobalStyleObject = {
       padding: "3",
     },
   },
+
+  ".react-aria-Tabs": {
+    "display": "flex",
+    "color": "mv4-onBackground",
+    "&[data-orientation=horizontal]": {
+      flexDirection: "column",
+    },
+  },
+
+  ".react-aria-TabList": {
+    "display": "flex",
+    "&[data-orientation=horizontal]": {
+      "borderBottom": "1px solid",
+      "borderColor": "mv4-outline",
+      ".react-aria-SelectionIndicator": {
+        left: 0,
+        bottom: 0,
+        width: "100%",
+        borderBottom: "3px solid",
+        borderBottomColor: "mv4-outline",
+      },
+    },
+  },
+
+  ".react-aria-Tab": {
+    "padding": "10px",
+    "cursor": "default",
+    "outline": "none",
+    "position": "relative",
+    "color": "mv4-onSurface",
+    "transition": "color 200ms",
+    "--border-color": "transparent",
+    "forcedColorAdjust": "none",
+    ".react-aria-SelectionIndicator": {
+      "position": "absolute",
+      "transitionProperty": "translate, width, height",
+      "transitionDuration": "200ms",
+      "@media (prefers-reduced-motion: reduce)": {
+        transition: "none",
+      },
+    },
+    "&[data-hovered], &[data-focused]": {
+      color: "mv4-primary",
+    },
+    "&[data-selected]": {
+      "--border-color": "mv4-primary",
+      "color": "mv4-onBackground",
+      ".react-aria-SelectionIndicator": {
+        borderBottomColor: "mv4-primary",
+      },
+    },
+    "&[data-disabled]": {
+      "color": "mv4-onSurface/40",
+      "&[data-selected]": {
+        "--border-color": "mv4-onSurface/40",
+        ".react-aria-SelectionIndicator": {
+          borderBottomColor: "mv4-onSurface/40",
+        },
+      },
+    },
+    "&[data-focus-visible]:after": {
+      content: "''",
+      position: "absolute",
+      inset: "4px",
+      borderRadius: "4px",
+      border: "2px solid",
+      borderColor: "mv4-primary",
+    },
+  },
+
+  ".react-aria-TabPanel": {
+    "marginTop": "4px",
+    "padding": "10px",
+    "borderRadius": "4px",
+    "outline": "none",
+    "&[data-focus-visible]": {
+      outline: "2px solid",
+      outlineColor: "mv4-primary",
+    },
+  },
 };
