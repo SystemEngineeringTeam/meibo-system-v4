@@ -1,7 +1,21 @@
+import type { ColumnDef } from "@tanstack/react-table";
 import type { JSX } from "react";
+import { useMemo } from "react";
 import { SelectionIndicator, Tab, TabList, TabPanel, Tabs } from "react-aria-components";
 import { useNavigate, useParams } from "react-router";
+import IconMaterialSymbolsArrowBack from "~icons/material-symbols/arrow-back";
+import IconMaterialSymbolsDeleteForever from "~icons/material-symbols/delete-forever";
+import IconMaterialSymbolsEdit from "~icons/material-symbols/edit";
 import IconButton from "@/components/IconButton";
+import MemberTable from "@/components/table";
+
+type EventData = {
+  id: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  location: string;
+};
 
 type MemberData = {
   id: string;
@@ -12,6 +26,14 @@ type MemberData = {
 };
 
 const defaultIcon = "https://nenex.me/assets/ira-D6gCFlkL.png";
+
+const initialEvents: EventData[] = [
+  { id: "1", name: "イベント1", startDate: "2024-12-01", endDate: "2024-12-01", location: "場所1" },
+  { id: "2", name: "イベント2", startDate: "2026-01-02", endDate: "2026-01-02", location: "場所2" },
+  { id: "3", name: "イベント3", startDate: "2025-01-03", endDate: "2025-01-03", location: "場所3" },
+  { id: "4", name: "イベント4", startDate: "2025-01-04", endDate: "2025-01-04", location: "場所4" },
+  { id: "5", name: "イベント5", startDate: "2025-01-05", endDate: "2025-01-05", location: "場所5" },
+];
 
 const initialMembers: MemberData[] = [
   { id: "1", grade: "B3", icon: defaultIcon, studentId: "K24015", name: "石丸凜弥" },
@@ -44,8 +66,64 @@ export default function Member(): JSX.Element {
   const { memberId } = useParams<{ memberId: string }>();
   const navigate = useNavigate();
 
-  return (
+  const getEventStatus = (startDate: string, endDate: string): "開催前" | "開催中" | "開催後" => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const eventStartDate = new Date(startDate);
+    eventStartDate.setHours(0, 0, 0, 0);
+    const eventEndDate = new Date(endDate);
+    eventEndDate.setHours(0, 0, 0, 0);
 
+    if (eventEndDate < today) {
+      return "開催後";
+    }
+    if (eventStartDate <= today && eventEndDate >= today) {
+      return "開催中";
+    }
+    return "開催前";
+  };
+
+  const columns = useMemo<Array<ColumnDef<EventData>>>(
+    () => [
+      {
+        header: "イベント名",
+        accessorKey: "name",
+        cell: ({ row }): JSX.Element => {
+          const status = getEventStatus(row.original.startDate, row.original.endDate);
+          const statusColor
+            = status === "開催中" ? "#4CAF50" : status === "開催前" ? "#FF9800" : "#9E9E9E";
+          return (
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span>{row.original.name}</span>
+              <span
+                style={{
+                  padding: "2px 8px",
+                  borderRadius: "4px",
+                  backgroundColor: statusColor,
+                  color: "white",
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                }}
+              >
+                {status}
+              </span>
+            </div>
+          );
+        },
+      },
+      {
+        header: "日時",
+        accessorKey: "startDate",
+      },
+      {
+        header: "開催場所",
+        accessorKey: "location",
+      },
+    ],
+    [],
+  );
+
+  return (
     <div>
       <div>
         <img
@@ -61,7 +139,11 @@ export default function Member(): JSX.Element {
         >
           <p>戻る</p>
         </IconButton>
-        <IconButton icon={<IconMaterialSymbolsEdit />} variant="filled">
+        <IconButton
+          icon={<IconMaterialSymbolsEdit />}
+          onClick={() => void navigate(`/members/${memberId}/edit`)}
+          variant="filled"
+        >
           <p>自分の情報の編集</p>
         </IconButton>
         <IconButton icon={<IconMaterialSymbolsDeleteForever />} variant="danger">
@@ -81,7 +163,7 @@ export default function Member(): JSX.Element {
           </Tab>
         </TabList>
         <TabPanel id="FoR">
-          参加イベントの内容がここに表示されます
+          <MemberTable columns={columns} data={initialEvents} />
         </TabPanel>
         <TabPanel id="MaR">
           支払い履歴の内容がここに表示されます

@@ -6,16 +6,12 @@
 // biome-ignore lint: disable
 export {}
 declare global {
-  const IconMaterialSymbolsAlignFlexCenter: typeof import('~icons/material-symbols/align-flex-center.jsx')['default']
   const IconMaterialSymbolsArrowBack: typeof import('~icons/material-symbols/arrow-back.jsx')['default']
   const IconMaterialSymbolsArrowForward: typeof import('~icons/material-symbols/arrow-forward.jsx')['default']
-  const IconMaterialSymbolsDeleteForever: typeof import('~icons/material-symbols/delete-forever.jsx')['default']
-  const IconMaterialSymbolsEdit: typeof import('~icons/material-symbols/edit.jsx')['default']
   const IconMaterialSymbolsCalendarMonth: typeof import('~icons/material-symbols/calendar-month.jsx')['default']
-  const IconMaterialSymbolsCheckCircleOutline: typeof import('~icons/material-symbols/check-circle-outline.jsx')['default']
   const IconMaterialSymbolsChevronLeft: typeof import('~icons/material-symbols/chevron-left.jsx')['default']
   const IconMaterialSymbolsChevronRight: typeof import('~icons/material-symbols/chevron-right.jsx')['default']
-  const IconMaterialSymbolsDoubleArrowLeft: typeof import('~icons/material-symbols/double-arrow-left.jsx')['default']
-  const IconMaterialSymbolsDoubleArrowRight: typeof import('~icons/material-symbols/double-arrow-right.jsx')['default']
+  const IconMaterialSymbolsDeleteForever: typeof import('~icons/material-symbols/delete-forever.jsx')['default']
+  const IconMaterialSymbolsEdit: typeof import('~icons/material-symbols/edit.jsx')['default']
   const IconMaterialSymbolsLock: typeof import('~icons/material-symbols/lock.jsx')['default']
 }

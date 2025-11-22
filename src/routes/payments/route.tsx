@@ -371,7 +371,9 @@ export default function Payments(): JSX.Element {
                     支払い情報を削除
                   </h2>
                   <p style={{ fontSize: "0.875rem", color: "#6b7280" }}>
-                    選択された{selectedRows.size}件の支払い情報を削除してもよろしいですか?
+                    選択された
+                    {selectedRows.size}
+                    件の支払い情報を削除してもよろしいですか?
                     <br />
                     この操作は取り消せません。
                   </p>
