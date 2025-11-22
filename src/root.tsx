@@ -6,6 +6,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 import Header from "./components/Header";
 import { Expanded } from "./components/recipes/atomic/Expanded";
@@ -27,6 +28,10 @@ export function HydrateFallback(): ReactElement {
 }
 
 export function Layout({ children }: { children: ReactNode }): ReactElement {
+  const location = useLocation();
+  const shouldShowHeader
+    = location.pathname !== "/registration" && location.pathname !== "/";
+
   return (
     <html lang="ja">
       <head>
@@ -36,7 +41,7 @@ export function Layout({ children }: { children: ReactNode }): ReactElement {
         <Links />
       </head>
       <body>
-        <Header />
+        {!!shouldShowHeader && <Header />}
         {children}
         <ScrollRestoration />
         <Scripts />

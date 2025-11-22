@@ -9,7 +9,7 @@ import IconMaterialSymbolsArrowDropDown from "~icons/material-symbols/arrow-drop
 import IconMaterialSymbolsArrowDropUp from "~icons/material-symbols/arrow-drop-up";
 import IconMaterialSymbolsArrowForward from "~icons/material-symbols/arrow-forward";
 import IconMaterialSymbolsCheck from "~icons/material-symbols/check";
-import IconMaterialSymbolsEdit from "~icons/material-symbols/edit";
+import IconMaterialSymbolsDelete from "~icons/material-symbols/delete";
 import IconMaterialSymbolsSearch from "~icons/material-symbols/search";
 import IconButton from "@/components/IconButton";
 import { Modal, ModalFooter } from "@/components/modal";
@@ -29,6 +29,7 @@ export default function Payments(): JSX.Element {
   const [sortedBy, setSortedBy] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedRows, setSelectedRows] = useState<Set<string>>(() => new Set());
 
   const handleSort = useCallback((sortKey: string): void => {
     if (sortedBy === sortKey) {
@@ -38,7 +39,6 @@ export default function Payments(): JSX.Element {
       setSortOrder("asc");
     }
   }, [sortedBy]);
-  const [, setSelectedRows] = useState<Set<string>>(); // 選択された行のIDを管理←これでuserの削除など
 
   const handleRowSelection = useCallback((id: string, isChecked: boolean): void => {
     setSelectedRows((prev) => {
@@ -189,6 +189,11 @@ export default function Payments(): JSX.Element {
 
       if (typeof aValue === "string" && typeof bValue === "string") {
         const comparison = aValue.localeCompare(bValue);
+        return sortOrder === "asc" ? comparison : -comparison;
+      }
+
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        const comparison = aValue - bValue;
         return sortOrder === "asc" ? comparison : -comparison;
       }
 
@@ -348,9 +353,61 @@ export default function Payments(): JSX.Element {
               </form>
             </Modal>
           </DialogTrigger>
-          <IconButton icon={<IconMaterialSymbolsEdit />}>
-            <p>編集</p>
-          </IconButton>
+          {selectedRows.size > 0 && (
+            <DialogTrigger>
+              <AriaButton
+                style={{
+                  all: "unset",
+                  cursor: "pointer",
+                }}
+              >
+                <IconButton icon={<IconMaterialSymbolsDelete />} variant="danger">
+                  <p>削除</p>
+                </IconButton>
+              </AriaButton>
+              <Modal showCloseButton={false}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                  <h2 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#111827" }}>
+                    支払い情報を削除
+                  </h2>
+                  <p style={{ fontSize: "0.875rem", color: "#6b7280" }}>
+                    選択された{selectedRows.size}件の支払い情報を削除してもよろしいですか?
+                    <br />
+                    この操作は取り消せません。
+                  </p>
+                  <ModalFooter>
+                    <AriaButton
+                      onPress={(): void => {
+                        setSelectedRows(new Set());
+                      }}
+                      slot="close"
+                    >
+                      <IconButton icon={<IconMaterialSymbolsArrowBack />}>
+                        <p>キャンセル</p>
+                      </IconButton>
+                    </AriaButton>
+                    <AriaButton
+                      onPress={(): void => {
+                        // ここで削除処理を実装
+                        // 削除完了後、全てのチェックを外す
+                        const checkboxes = document.querySelectorAll<HTMLInputElement>("input[type=\"checkbox\"]");
+                        checkboxes.forEach((checkbox) => {
+                          checkbox.checked = false;
+                        });
+
+                        setSelectedRows(new Set());
+                      }}
+                      slot="close"
+                    >
+                      <IconButton icon={<IconMaterialSymbolsDelete />} variant="danger">
+                        <p>削除</p>
+                      </IconButton>
+                    </AriaButton>
+                  </ModalFooter>
+                </div>
+              </Modal>
+            </DialogTrigger>
+          )}
         </div>
         <div style={{ position: "relative", width: "300px", padding: "20px" }}>
           <IconMaterialSymbolsSearch
