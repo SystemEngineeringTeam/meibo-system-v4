@@ -1,6 +1,6 @@
 import type { JSX } from "react";
+import { SelectionIndicator, Tab, TabList, TabPanel, Tabs } from "react-aria-components";
 import { useNavigate, useParams } from "react-router";
-
 import IconButton from "@/components/IconButton";
 
 type MemberData = {
@@ -67,8 +67,26 @@ export default function Member(): JSX.Element {
         <IconButton icon={<IconMaterialSymbolsDeleteForever />} variant="danger">
           <p>部員を削除</p>
         </IconButton>
-
       </div>
+
+      <Tabs>
+        <TabList aria-label="部員の詳細タブ">
+          <Tab id="FoR">
+            <span>参加イベント</span>
+            <SelectionIndicator />
+          </Tab>
+          <Tab id="MaR">
+            <span>支払い履歴</span>
+            <SelectionIndicator />
+          </Tab>
+        </TabList>
+        <TabPanel id="FoR">
+          参加イベントの内容がここに表示されます
+        </TabPanel>
+        <TabPanel id="MaR">
+          支払い履歴の内容がここに表示されます
+        </TabPanel>
+      </Tabs>
     </div>
   );
 }
