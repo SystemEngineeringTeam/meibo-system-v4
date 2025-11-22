@@ -54,12 +54,12 @@ export default function Registration(): JSX.Element {
   // フィールドの表示/非表示を判定
   const shouldHideField = (fieldId: number): boolean => {
     // 内部生の場合、学校名・学部名を非表示
-    if (affiliation === "内部" && (fieldId === 6 || fieldId === 7)) {
-      return true;
+    if (fieldId === 6 || fieldId === 7) {
+      return affiliation !== "外部";
     }
-    // 実家暮らしの場合、実家の郵便番号・住所を非表示
-    if (isLivingWithFamily === "はい" && (fieldId === 15 || fieldId === 16)) {
-      return true;
+    // 実家暮らしでない場合、実家の郵便番号・住所を表示
+    if (fieldId === 15 || fieldId === 16) {
+      return isLivingWithFamily !== "いいえ";
     }
     return false;
   };
