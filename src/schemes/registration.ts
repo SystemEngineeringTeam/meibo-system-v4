@@ -15,10 +15,10 @@ export const registrationSchema = z.object({
   gender: z.enum(["男性", "女性", "その他"], { message: "性別を選択してください" }),
   phoneNumber: z.string()
     .min(1, { message: "電話番号を入力してください" })
-    .regex(/^[\d-]+$/, { message: "半角で入力してください" }),
+    .regex(/^\d{3}-\d{4}-\d{4}$/, { message: "電話番号は半角で080-0000-0000の形式で入力してください" }),
   postalCode: z.string()
     .min(1, { message: "郵便番号を入力してください" })
-    .regex(/^\d{3}-\d{4}$/, { message: "郵便番号は000-0000の形式で入力してください" }),
+    .regex(/^\d{3}-\d{4}$/, { message: "郵便番号は半角で000-0000の形式で入力してください" }),
   currentAddress: z.string().min(1, { message: "現在の住所を入力してください" }),
   isLivingWithFamily: z.enum(["はい", "いいえ"], { message: "実家暮らしかどうかを選択してください" }),
   familyPostalCode: z.string().optional(),
