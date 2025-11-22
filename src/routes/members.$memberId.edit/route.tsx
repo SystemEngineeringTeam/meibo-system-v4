@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import DatePicker from "@/components/DatePicker";
 import IconButton from "@/components/IconButton";
 import { Input } from "@/components/recipes/atomic/Input";
@@ -8,6 +8,7 @@ import { RadioGroup } from "@/components/recipes/atomic/RadioGroup";
 import { DynamicFieldSelect, GradeSelect } from "@/components/recipes/DomainSelects";
 
 export default function MemberEdit(): JSX.Element {
+  const { memberId } = useParams<{ memberId: string }>();
   const navigate = useNavigate();
   const [affiliation, setAffiliation] = useState<string>("");
   const [isLivingWithFamily, setIsLivingWithFamily] = useState<string>("");
@@ -185,15 +186,24 @@ export default function MemberEdit(): JSX.Element {
           </div>
         );
       })}
-      <div style={{ marginBlock: "40px", display: "flex", justifyContent: "end" }}>
+      <div style={{ marginBlock: "40px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <IconButton
+          icon={<IconMaterialSymbolsArrowBack />}
+          onClick={() => {
+            void navigate(`/members/${memberId}`);
+          }}
+          variant="outlined"
+        >
+          <p>戻る</p>
+        </IconButton>
         <IconButton
           icon={<IconMaterialSymbolsArrowForward />}
           onClick={() => {
-            void navigate("/members");
+            void navigate(`/members/${memberId}`);
           }}
           variant="filled"
         >
-          <p>登録</p>
+          <p>更新</p>
         </IconButton>
       </div>
     </div>
