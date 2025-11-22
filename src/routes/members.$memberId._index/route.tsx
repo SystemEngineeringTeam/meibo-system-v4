@@ -1,7 +1,20 @@
+import type { ColumnDef } from "@tanstack/react-table";
 import type { JSX } from "react";
+import { useMemo } from "react";
 import { SelectionIndicator, Tab, TabList, TabPanel, Tabs } from "react-aria-components";
 import { useNavigate, useParams } from "react-router";
+import IconMaterialSymbolsArrowBack from "~icons/material-symbols/arrow-back";
+import IconMaterialSymbolsDeleteForever from "~icons/material-symbols/delete-forever";
+import IconMaterialSymbolsEdit from "~icons/material-symbols/edit";
 import IconButton from "@/components/IconButton";
+import MemberTable from "@/components/table";
+
+type EventData = {
+  id: string;
+  name: string;
+  startDate: string;
+  location: string;
+};
 
 type MemberData = {
   id: string;
@@ -12,6 +25,14 @@ type MemberData = {
 };
 
 const defaultIcon = "https://nenex.me/assets/ira-D6gCFlkL.png";
+
+const initialEvents: EventData[] = [
+  { id: "1", name: "イベント1", startDate: "2025-01-01", location: "場所1" },
+  { id: "2", name: "イベント2", startDate: "2025-01-02", location: "場所2" },
+  { id: "3", name: "イベント3", startDate: "2025-01-03", location: "場所3" },
+  { id: "4", name: "イベント4", startDate: "2025-01-04", location: "場所4" },
+  { id: "5", name: "イベント5", startDate: "2025-01-05", location: "場所5" },
+];
 
 const initialMembers: MemberData[] = [
   { id: "1", grade: "B3", icon: defaultIcon, studentId: "K24015", name: "石丸凜弥" },
@@ -44,8 +65,25 @@ export default function Member(): JSX.Element {
   const { memberId } = useParams<{ memberId: string }>();
   const navigate = useNavigate();
 
-  return (
+  const columns = useMemo<Array<ColumnDef<EventData>>>(
+    () => [
+      {
+        header: "イベント名",
+        accessorKey: "name",
+      },
+      {
+        header: "日時",
+        accessorKey: "startDate",
+      },
+      {
+        header: "開催場所",
+        accessorKey: "location",
+      },
+    ],
+    [],
+  );
 
+  return (
     <div>
       <div>
         <img
@@ -61,7 +99,11 @@ export default function Member(): JSX.Element {
         >
           <p>戻る</p>
         </IconButton>
-        <IconButton icon={<IconMaterialSymbolsEdit />} variant="filled">
+        <IconButton
+          icon={<IconMaterialSymbolsEdit />}
+          onClick={() => void navigate(`/members/${memberId}/edit`)}
+          variant="filled"
+        >
           <p>自分の情報の編集</p>
         </IconButton>
         <IconButton icon={<IconMaterialSymbolsDeleteForever />} variant="danger">
@@ -81,7 +123,7 @@ export default function Member(): JSX.Element {
           </Tab>
         </TabList>
         <TabPanel id="FoR">
-          参加イベントの内容がここに表示されます
+          <MemberTable columns={columns} data={initialEvents} />
         </TabPanel>
         <TabPanel id="MaR">
           支払い履歴の内容がここに表示されます
