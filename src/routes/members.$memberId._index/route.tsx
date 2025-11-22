@@ -28,7 +28,7 @@ const defaultIcon = "https://nenex.me/assets/ira-D6gCFlkL.png";
 
 const initialEvents: EventData[] = [
   { id: "1", name: "イベント1", startDate: "2025-01-01", location: "場所1" },
-  { id: "2", name: "イベント2", startDate: "2025-01-02", location: "場所2" },
+  { id: "2", name: "イベント2", startDate: "2026-01-02", location: "場所2" },
   { id: "3", name: "イベント3", startDate: "2025-01-03", location: "場所3" },
   { id: "4", name: "イベント4", startDate: "2025-01-04", location: "場所4" },
   { id: "5", name: "イベント5", startDate: "2025-01-05", location: "場所5" },
@@ -65,11 +65,44 @@ export default function Member(): JSX.Element {
   const { memberId } = useParams<{ memberId: string }>();
   const navigate = useNavigate();
 
+  const getEventStatus = (startDate: string): "開催前" | "開催中" => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const eventDate = new Date(startDate);
+    eventDate.setHours(0, 0, 0, 0);
+
+    if (eventDate <= today) {
+      return "開催中";
+    }
+    return "開催前";
+  };
+
   const columns = useMemo<Array<ColumnDef<EventData>>>(
     () => [
       {
         header: "イベント名",
         accessorKey: "name",
+        cell: ({ row }): JSX.Element => {
+          const status = getEventStatus(row.original.startDate);
+          const statusColor = status === "開催中" ? "#4CAF50" : "#FF9800";
+          return (
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span>{row.original.name}</span>
+              <span
+                style={{
+                  padding: "2px 8px",
+                  borderRadius: "4px",
+                  backgroundColor: statusColor,
+                  color: "white",
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                }}
+              >
+                {status}
+              </span>
+            </div>
+          );
+        },
       },
       {
         header: "日時",
