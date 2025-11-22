@@ -1,37 +1,54 @@
 import type { JSX } from "react";
-import { useState } from "react";
+import type { RegistrationFormData } from "@/schemes/registration";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import DatePicker from "@/components/DatePicker";
 import IconButton from "@/components/IconButton";
 import { Input } from "@/components/recipes/atomic/Input";
 import { RadioGroup } from "@/components/recipes/atomic/RadioGroup";
 import { DynamicFieldSelect, GradeSelect } from "@/components/recipes/DomainSelects";
+import { registrationSchema } from "@/schemes/registration";
 
 export default function Registration(): JSX.Element {
   const navigate = useNavigate();
-  const [affiliation, setAffiliation] = useState<string>("");
-  const [isLivingWithFamily, setIsLivingWithFamily] = useState<string>("");
-  const [selectedValue, setSelectedValue] = useState<string>("");
-  const [birthday, setBirthday] = useState<string>("");
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<RegistrationFormData>({
+    resolver: zodResolver(registrationSchema as any),
+  });
+
+  const affiliation = watch("affiliation");
+  const isLivingWithFamily = watch("isLivingWithFamily");
+
+  const onSubmit = (data: RegistrationFormData): void => {
+    // eslint-disable-next-line no-console
+    console.log("Form submitted:", data);
+    void navigate("/members");
+  };
 
   const fields = [
-    { id: 1, label: "名前", placeholder: "石丸凛弥" },
-    { id: 2, label: "フリガナ", placeholder: "インマルリンヤ" },
-    { id: 3, label: "卒業(予定)年度", placeholder: "28卒" },
-    { id: 4, label: "学年", placeholder: "B1" },
-    { id: 5, label: "所属", type: "select" as const },
-    { id: 6, label: "学校名", placeholder: "中央大学" },
-    { id: 7, label: "学部名", placeholder: "情報科学科" },
-    { id: 8, label: "他の所属団体", placeholder: "Code" },
-    { id: 9, label: "誕生日", placeholder: "2005/07/18" },
-    { id: 10, label: "性別", placeholder: "男性 / 女性 / その他" },
-    { id: 11, label: "電話番号", placeholder: "090-0000-0000" },
-    { id: 12, label: "郵便番号", placeholder: "000-0000" },
-    { id: 13, label: "現在の住所", placeholder: "名古屋市名東区39" },
-    { id: 14, label: "実家暮らしか", type: "radio" as const },
-    { id: 15, label: "実家の郵便番号", placeholder: "000-0000" },
-    { id: 16, label: "実家の住所", placeholder: "名古屋市名東区39" },
-    { id: 17, label: "お金を渡した人", placeholder: "石丸" },
+    { id: 1, label: "名前", placeholder: "石丸凛弥", name: "name" as const },
+    { id: 2, label: "フリガナ", placeholder: "インマルリンヤ", name: "furigana" as const },
+    { id: 3, label: "卒業(予定)年度", placeholder: "28卒", name: "graduationYear" as const },
+    { id: 4, label: "学年", placeholder: "B1", name: "grade" as const },
+    { id: 5, label: "所属", type: "select" as const, name: "affiliation" as const },
+    { id: 6, label: "学校名", placeholder: "中央大学", name: "schoolName" as const },
+    { id: 7, label: "学部名", placeholder: "情報科学科", name: "departmentName" as const },
+    { id: 8, label: "他の所属団体", placeholder: "Code", name: "otherAffiliation" as const },
+    { id: 9, label: "誕生日", placeholder: "2005/07/18", name: "birthday" as const },
+    { id: 10, label: "性別", placeholder: "男性 / 女性 / その他", name: "gender" as const },
+    { id: 11, label: "電話番号", placeholder: "090-0000-0000", name: "phoneNumber" as const },
+    { id: 12, label: "郵便番号", placeholder: "000-0000", name: "postalCode" as const },
+    { id: 13, label: "現在の住所", placeholder: "名古屋市名東区39", name: "currentAddress" as const },
+    { id: 14, label: "実家暮らしか", type: "radio" as const, name: "isLivingWithFamily" as const },
+    { id: 15, label: "実家の郵便番号", placeholder: "000-0000", name: "familyPostalCode" as const },
+    { id: 16, label: "実家の住所", placeholder: "名古屋市名東区39", name: "familyAddress" as const },
+    { id: 17, label: "お金を渡した人", placeholder: "石丸", name: "paidPerson" as const },
   ];
 
   // フィールドの表示/非表示を判定
@@ -55,15 +72,20 @@ export default function Registration(): JSX.Element {
         <p style={{ fontSize: "12px", color: "#72787E", marginBottom: "12px" }}>
           *愛工大生は内部生を選択してください
         </p>
+        {errors.affiliation && (
+          <p style={{ fontSize: "12px", color: "red" }}>{errors.affiliation.message}</p>
+        )}
       </div>
       <RadioGroup
         name="affiliation"
-        onChange={setAffiliation}
+        onChange={(value: string) => {
+          setValue("affiliation", value as "内部" | "外部");
+        }}
         options={[
           { label: "内部", value: "内部" },
           { label: "外部", value: "外部" },
         ]}
-        value={affiliation}
+        value={affiliation ?? ""}
       />
     </div>
   );
@@ -71,77 +93,121 @@ export default function Registration(): JSX.Element {
   // 実家暮らしフィールドのレンダリング
   const renderLivingWithFamilyField = (label: string): JSX.Element => (
     <div style={{ padding: "20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-      <p style={{ marginBottom: "8px" }}>{label}</p>
+      <div>
+        <p style={{ marginBottom: "8px" }}>{label}</p>
+        {errors.isLivingWithFamily && (
+          <p style={{ fontSize: "12px", color: "red" }}>{errors.isLivingWithFamily.message}</p>
+        )}
+      </div>
       <RadioGroup
-        name="livingWithFamily"
-        onChange={setIsLivingWithFamily}
+        name="isLivingWithFamily"
+        onChange={(value: string) => {
+          setValue("isLivingWithFamily", value as "はい" | "いいえ");
+        }}
         options={[
           { label: "はい", value: "はい" },
           { label: "いいえ", value: "いいえ" },
         ]}
-        value={isLivingWithFamily}
+        value={isLivingWithFamily ?? ""}
       />
     </div>
   );
 
   const genderSelection = (label: string): JSX.Element => (
     <div style={{ padding: "20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-      <p style={{ marginBottom: "8px" }}>{label}</p>
+      <div>
+        <p style={{ marginBottom: "8px" }}>{label}</p>
+        {errors.gender && (
+          <p style={{ fontSize: "12px", color: "red" }}>{errors.gender.message}</p>
+        )}
+      </div>
       <RadioGroup
-        name="livingWithFamily"
-        onChange={setIsLivingWithFamily}
+        name="gender"
+        onChange={(value: string) => {
+          setValue("gender", value as "男性" | "女性" | "その他");
+        }}
         options={[
           { label: "男性", value: "男性" },
           { label: "女性", value: "女性" },
           { label: "その他", value: "その他" },
         ]}
-        value={isLivingWithFamily}
+        value={watch("gender") ?? ""}
       />
     </div>
   );
 
   // 通常の入力フィールドのレンダリング
-  const renderInputField = (fieldId: number, label: string, placeholder: string): JSX.Element => (
-    <div
-      style={{
-        padding: "20px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: "100px",
-      }}
-    >
-      <p>{label}</p>
-      {(fieldId === 3 || fieldId === 17)
-        ? (
-            <DynamicFieldSelect
-              id={fieldId as number}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                setSelectedValue(e.target.value);
-              }}
-              value={selectedValue}
-            />
-          )
-        : (fieldId === 4)
-            ? (
-                <GradeSelect />
-              )
-            : (fieldId === 9)
-                ? (
-                    <DatePicker
-                      onChange={setBirthday}
-                      placeholder={placeholder}
-                      value={birthday}
-                    />
-                  )
-                : (
-                    <Input placeholder={placeholder} />
-                  )}
-    </div>
-  );
+  const renderInputField = (field: typeof fields[number]): JSX.Element => {
+    if (!("name" in field) || !("placeholder" in field))
+      return <></>;
+
+    const fieldName = field.name;
+    const error = errors[fieldName];
+
+    return (
+      <div
+        style={{
+          padding: "20px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "100px",
+        }}
+      >
+        <div>
+          <p>{field.label}</p>
+          {error && (
+            <p style={{ fontSize: "12px", color: "red" }}>{error.message as string}</p>
+          )}
+        </div>
+        {(field.id === 3 || field.id === 17)
+          ? (
+              <DynamicFieldSelect
+                {...register(fieldName)}
+                id={field.id}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  setValue(fieldName, e.target.value);
+                }}
+                value={watch(fieldName) ?? ""}
+              />
+            )
+          : (field.id === 4)
+              ? (
+                  <GradeSelect {...register(fieldName)} />
+                )
+              : (field.id === 9)
+                  ? (
+                      <DatePicker
+                        {...register(fieldName)}
+                        onChange={(value: string) => {
+                          setValue(fieldName, value);
+                        }}
+                        placeholder={field.placeholder}
+                        value={watch(fieldName) ?? ""}
+                      />
+                    )
+                  : (
+                      <Input
+                        {...register(fieldName)}
+                        placeholder={field.placeholder}
+                      />
+                    )}
+      </div>
+    );
+  };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", maxWidth: "600px", margin: "0 auto" }}>
+    <form
+      onSubmit={(e) => {
+        void handleSubmit(onSubmit)(e);
+      }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        maxWidth: "600px",
+        margin: "0 auto",
+      }}
+    >
       {fields.map((field) => {
         // 非表示対象のフィールドはスキップ
         if (shouldHideField(field.id)) {
@@ -162,9 +228,7 @@ export default function Registration(): JSX.Element {
             {field.id !== 5
               && field.id !== 10
               && field.id !== 14
-              && "placeholder" in field
-              && field.placeholder
-              && renderInputField(field.id, field.label, field.placeholder)}
+              && renderInputField(field)}
 
             {/* 非公開情報の注釈 */}
             {field.id === 8 && (
@@ -188,14 +252,13 @@ export default function Registration(): JSX.Element {
       <div style={{ marginBlock: "40px", display: "flex", justifyContent: "end" }}>
         <IconButton
           icon={<IconMaterialSymbolsArrowForward />}
-          onClick={() => {
-            void navigate("/members");
-          }}
+          onClick={() => {}}
+          type="submit"
           variant="filled"
         >
           <p>登録</p>
         </IconButton>
       </div>
-    </div>
+    </form>
   );
 }
