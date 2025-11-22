@@ -11,7 +11,5 @@ declare global {
   const IconMaterialSymbolsCalendarMonth: typeof import('~icons/material-symbols/calendar-month.jsx')['default']
   const IconMaterialSymbolsChevronLeft: typeof import('~icons/material-symbols/chevron-left.jsx')['default']
   const IconMaterialSymbolsChevronRight: typeof import('~icons/material-symbols/chevron-right.jsx')['default']
-  const IconMaterialSymbolsDeleteForever: typeof import('~icons/material-symbols/delete-forever.jsx')['default']
-  const IconMaterialSymbolsEdit: typeof import('~icons/material-symbols/edit.jsx')['default']
   const IconMaterialSymbolsLock: typeof import('~icons/material-symbols/lock.jsx')['default']
 }
