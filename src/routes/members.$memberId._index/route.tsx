@@ -13,6 +13,7 @@ type EventData = {
   id: string;
   name: string;
   startDate: string;
+  endDate: string;
   location: string;
 };
 
@@ -27,11 +28,11 @@ type MemberData = {
 const defaultIcon = "https://nenex.me/assets/ira-D6gCFlkL.png";
 
 const initialEvents: EventData[] = [
-  { id: "1", name: "イベント1", startDate: "2025-01-01", location: "場所1" },
-  { id: "2", name: "イベント2", startDate: "2026-01-02", location: "場所2" },
-  { id: "3", name: "イベント3", startDate: "2025-01-03", location: "場所3" },
-  { id: "4", name: "イベント4", startDate: "2025-01-04", location: "場所4" },
-  { id: "5", name: "イベント5", startDate: "2025-01-05", location: "場所5" },
+  { id: "1", name: "イベント1", startDate: "2024-12-01", endDate: "2024-12-01", location: "場所1" },
+  { id: "2", name: "イベント2", startDate: "2026-01-02", endDate: "2026-01-02", location: "場所2" },
+  { id: "3", name: "イベント3", startDate: "2025-01-03", endDate: "2025-01-03", location: "場所3" },
+  { id: "4", name: "イベント4", startDate: "2025-01-04", endDate: "2025-01-04", location: "場所4" },
+  { id: "5", name: "イベント5", startDate: "2025-01-05", endDate: "2025-01-05", location: "場所5" },
 ];
 
 const initialMembers: MemberData[] = [
@@ -65,13 +66,18 @@ export default function Member(): JSX.Element {
   const { memberId } = useParams<{ memberId: string }>();
   const navigate = useNavigate();
 
-  const getEventStatus = (startDate: string): "開催前" | "開催中" => {
+  const getEventStatus = (startDate: string, endDate: string): "開催前" | "開催中" | "開催後" => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const eventDate = new Date(startDate);
-    eventDate.setHours(0, 0, 0, 0);
+    const eventStartDate = new Date(startDate);
+    eventStartDate.setHours(0, 0, 0, 0);
+    const eventEndDate = new Date(endDate);
+    eventEndDate.setHours(0, 0, 0, 0);
 
-    if (eventDate <= today) {
+    if (eventEndDate < today) {
+      return "開催後";
+    }
+    if (eventStartDate <= today && eventEndDate >= today) {
       return "開催中";
     }
     return "開催前";
@@ -83,8 +89,9 @@ export default function Member(): JSX.Element {
         header: "イベント名",
         accessorKey: "name",
         cell: ({ row }): JSX.Element => {
-          const status = getEventStatus(row.original.startDate);
-          const statusColor = status === "開催中" ? "#4CAF50" : "#FF9800";
+          const status = getEventStatus(row.original.startDate, row.original.endDate);
+          const statusColor
+            = status === "開催中" ? "#4CAF50" : status === "開催前" ? "#FF9800" : "#9E9E9E";
           return (
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <span>{row.original.name}</span>
