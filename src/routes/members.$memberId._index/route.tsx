@@ -1,12 +1,16 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import type { JSX } from "react";
-import { useMemo } from "react";
-import { SelectionIndicator, Tab, TabList, TabPanel, Tabs } from "react-aria-components";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Button as AriaButton, DialogTrigger, SelectionIndicator, Tab, TabList, TabPanel, Tabs } from "react-aria-components";
 import { useNavigate, useParams } from "react-router";
 import IconMaterialSymbolsArrowBack from "~icons/material-symbols/arrow-back";
+import IconMaterialSymbolsArrowDropDown from "~icons/material-symbols/arrow-drop-down";
+import IconMaterialSymbolsArrowDropUp from "~icons/material-symbols/arrow-drop-up";
+import IconMaterialSymbolsDelete from "~icons/material-symbols/delete";
 import IconMaterialSymbolsDeleteForever from "~icons/material-symbols/delete-forever";
 import IconMaterialSymbolsEdit from "~icons/material-symbols/edit";
 import IconButton from "@/components/IconButton";
+import { Modal, ModalFooter } from "@/components/modal";
 import MemberTable from "@/components/table";
 
 type EventData = {
@@ -15,6 +19,13 @@ type EventData = {
   startDate: string;
   endDate: string;
   location: string;
+};
+
+type PaymentHistoryData = {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
 };
 
 type MemberData = {
@@ -33,6 +44,14 @@ const initialEvents: EventData[] = [
   { id: "3", name: "イベント3", startDate: "2025-01-03", endDate: "2025-01-03", location: "場所3" },
   { id: "4", name: "イベント4", startDate: "2025-01-04", endDate: "2025-01-04", location: "場所4" },
   { id: "5", name: "イベント5", startDate: "2025-01-05", endDate: "2025-01-05", location: "場所5" },
+];
+
+const initialPaymentHistory: PaymentHistoryData[] = [
+  { id: "1", name: "新入生歓迎会", price: 3000, description: "新入生を歓迎するためのイベント" },
+  { id: "2", name: "春のハッカソン", price: 1500, description: "24時間プログラミングコンテスト" },
+  { id: "3", name: "技術講習会", price: 0, description: "最新技術のワークショップ" },
+  { id: "4", name: "夏合宿", price: 15000, description: "2泊3日の開発合宿" },
+  { id: "5", name: "学園祭出展", price: 0, description: "学園祭での展示・発表" },
 ];
 
 const initialMembers: MemberData[] = [
@@ -65,6 +84,57 @@ const initialMembers: MemberData[] = [
 export default function Member(): JSX.Element {
   const { memberId } = useParams<{ memberId: string }>();
   const navigate = useNavigate();
+  const baseMember = initialMembers.find((m) => m.id === memberId);
+  const [paymentSortedBy, setPaymentSortedBy] = useState<string>("");
+  const [paymentSortOrder, setPaymentSortOrder] = useState<"asc" | "desc">("asc");
+
+  // ローカルストレージから更新された名前を読み込む
+  const getMemberNameFromStorage = useCallback((): string | undefined => {
+    if (memberId == null) {
+      return baseMember?.name;
+    }
+    const savedName = localStorage.getItem(`member_${memberId}_name`);
+    return savedName ?? baseMember?.name;
+  }, [memberId, baseMember?.name]);
+
+  const [memberName, setMemberName] = useState<string | undefined>(() => getMemberNameFromStorage());
+
+  // memberIdが変更されたとき、またはページがフォーカスされたときに名前を更新
+  useEffect(() => {
+    const updateName = (): void => {
+      const newName = getMemberNameFromStorage();
+      setMemberName((prevName) => {
+        if (prevName !== newName) {
+          return newName;
+        }
+        return prevName;
+      });
+    };
+
+    updateName();
+
+    // ページがフォーカスされたときに更新（編集ページから戻ってきたとき）
+    const handleFocus = (): void => {
+      updateName();
+    };
+
+    window.addEventListener("focus", handleFocus);
+
+    return (): void => {
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [getMemberNameFromStorage]);
+
+  const member = baseMember ? { ...baseMember, name: memberName ?? baseMember.name } : undefined;
+
+  const handlePaymentSort = useCallback((sortKey: string): void => {
+    if (paymentSortedBy === sortKey) {
+      setPaymentSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setPaymentSortedBy(sortKey);
+      setPaymentSortOrder("asc");
+    }
+  }, [paymentSortedBy]);
 
   const getEventStatus = (startDate: string, endDate: string): "開催前" | "開催中" | "開催後" => {
     const today = new Date();
@@ -123,6 +193,88 @@ export default function Member(): JSX.Element {
     [],
   );
 
+  const paymentColumns = useMemo<Array<ColumnDef<PaymentHistoryData>>>(
+    () => [
+      {
+        accessorKey: "name",
+        header: (): JSX.Element => (
+          <div
+            onClick={(): void => {
+              handlePaymentSort("name");
+            }}
+            style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+          >
+            タイトル
+            {(paymentSortedBy === "" || paymentSortedBy === "name") && (
+              paymentSortOrder === "asc"
+                ? <IconMaterialSymbolsArrowDropUp />
+                : <IconMaterialSymbolsArrowDropDown />
+            )}
+          </div>
+        ),
+        cell: ({ getValue }): string => getValue() as string,
+        size: 200,
+      },
+      {
+        accessorKey: "price",
+        header: (): JSX.Element => (
+          <div
+            onClick={(): void => {
+              handlePaymentSort("price");
+            }}
+            style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+          >
+            金額
+            {(paymentSortedBy === "" || paymentSortedBy === "price") && (
+              paymentSortOrder === "asc"
+                ? <IconMaterialSymbolsArrowDropUp />
+                : <IconMaterialSymbolsArrowDropDown />
+            )}
+          </div>
+        ),
+        cell: ({ getValue }): string => {
+          const price = getValue() as number | undefined;
+          return price !== undefined ? `¥${price.toLocaleString()}` : "-";
+        },
+        size: 100,
+      },
+      {
+        accessorKey: "description",
+        header: (): string => "詳細",
+        cell: ({ getValue }): string => getValue() as string,
+        size: 300,
+      },
+    ],
+    [paymentSortedBy, paymentSortOrder, handlePaymentSort],
+  );
+
+  // 支払い履歴のフィルタリングとソート
+  const filteredAndSortedPaymentData = useMemo(() => {
+    let data = [...initialPaymentHistory];
+
+    // ソート
+    if (paymentSortedBy !== "") {
+      data = data.sort((a, b) => {
+        const aValue = a[paymentSortedBy as keyof typeof a];
+        const bValue = b[paymentSortedBy as keyof typeof b];
+
+        if (typeof aValue === "string" && typeof bValue === "string") {
+          const comparison = aValue.localeCompare(bValue);
+          return paymentSortOrder === "asc" ? comparison : -comparison;
+        }
+
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          const comparison = aValue - bValue;
+          return paymentSortOrder === "asc" ? comparison : -comparison;
+        }
+
+        return 0;
+      });
+    }
+
+    return data;
+  }, [paymentSortedBy, paymentSortOrder]);
+
   return (
     <div>
       <div>
@@ -130,8 +282,8 @@ export default function Member(): JSX.Element {
           src={defaultIcon}
           style={{ width: "89px", height: "89px", borderRadius: "50%" }}
         />
-        {initialMembers.find((member) => member.id === memberId)?.name}
-        {initialMembers.find((member) => member.id === memberId)?.studentId}
+        {member?.name}
+        {member?.studentId}
         <IconButton
           icon={<IconMaterialSymbolsArrowBack />}
           onClick={() => void navigate("/members")}
@@ -146,9 +298,49 @@ export default function Member(): JSX.Element {
         >
           <p>自分の情報の編集</p>
         </IconButton>
-        <IconButton icon={<IconMaterialSymbolsDeleteForever />} variant="danger">
-          <p>部員を削除</p>
-        </IconButton>
+        <DialogTrigger>
+          <AriaButton
+            style={{
+              all: "unset",
+              cursor: "pointer",
+            }}
+          >
+            <IconButton icon={<IconMaterialSymbolsDeleteForever />} variant="danger">
+              <p>部員を削除</p>
+            </IconButton>
+          </AriaButton>
+          <Modal showCloseButton={false}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+              <h2 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#111827" }}>
+                部員を削除
+              </h2>
+              <p style={{ fontSize: "0.875rem", color: "#6b7280" }}>
+                {member?.name}
+                を削除してもよろしいですか?
+                <br />
+                この操作は取り消せません。
+              </p>
+              <ModalFooter>
+                <AriaButton slot="close">
+                  <IconButton icon={<IconMaterialSymbolsArrowBack />}>
+                    <p>キャンセル</p>
+                  </IconButton>
+                </AriaButton>
+                <AriaButton
+                  onPress={(): void => {
+                    // ここで削除処理を実装
+                    void navigate("/members");
+                  }}
+                  slot="close"
+                >
+                  <IconButton icon={<IconMaterialSymbolsDelete />} variant="danger">
+                    <p>削除</p>
+                  </IconButton>
+                </AriaButton>
+              </ModalFooter>
+            </div>
+          </Modal>
+        </DialogTrigger>
       </div>
 
       <Tabs>
@@ -166,7 +358,7 @@ export default function Member(): JSX.Element {
           <MemberTable columns={columns} data={initialEvents} />
         </TabPanel>
         <TabPanel id="MaR">
-          支払い履歴の内容がここに表示されます
+          <MemberTable columns={paymentColumns} data={filteredAndSortedPaymentData} />
         </TabPanel>
       </Tabs>
     </div>

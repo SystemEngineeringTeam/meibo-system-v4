@@ -1,13 +1,17 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import type { JSX } from "react";
 import { useCallback, useMemo, useState } from "react";
+import { Button as AriaButton, DialogTrigger } from "react-aria-components";
 import { useNavigate } from "react-router";
+import IconMaterialSymbolsArrowBack from "~icons/material-symbols/arrow-back";
 import IconMaterialSymbolsArrowDropDown from "~icons/material-symbols/arrow-drop-down";
 import IconMaterialSymbolsArrowDropUp from "~icons/material-symbols/arrow-drop-up";
 import IconMaterialSymbolsArrowForward from "~icons/material-symbols/arrow-forward";
+import IconMaterialSymbolsDelete from "~icons/material-symbols/delete";
 import IconMaterialSymbolsEdit from "~icons/material-symbols/edit";
 import IconMaterialSymbolsSearch from "~icons/material-symbols/search";
 import IconButton from "@/components/IconButton";
+import { Modal, ModalFooter } from "@/components/modal";
 import MemberTable from "@/components/table";
 
 type MemberData = {
@@ -230,14 +234,51 @@ export default function Members(): JSX.Element {
         }}
       >
         <div style={{ display: "flex", gap: "1rem" }}>
-          <IconButton
-            disabled={selectedRows.size === 0}
-            icon={<IconMaterialSymbolsEdit />}
-            onClick={handleDeleteSelected}
-            variant="danger"
-          >
-            <span>削除</span>
-          </IconButton>
+          {selectedRows.size > 0 && (
+            <DialogTrigger>
+              <AriaButton
+                style={{
+                  all: "unset",
+                  cursor: "pointer",
+                }}
+              >
+                <IconButton icon={<IconMaterialSymbolsEdit />} variant="danger">
+                  <span>削除</span>
+                </IconButton>
+              </AriaButton>
+              <Modal showCloseButton={false}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                  <h2 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#111827" }}>
+                    部員を削除
+                  </h2>
+                  <p style={{ fontSize: "0.875rem", color: "#6b7280" }}>
+                    選択された
+                    {selectedRows.size}
+                    件の部員を削除してもよろしいですか?
+                    <br />
+                    この操作は取り消せません。
+                  </p>
+                  <ModalFooter>
+                    <AriaButton slot="close">
+                      <IconButton icon={<IconMaterialSymbolsArrowBack />}>
+                        <p>キャンセル</p>
+                      </IconButton>
+                    </AriaButton>
+                    <AriaButton
+                      onPress={(): void => {
+                        handleDeleteSelected();
+                      }}
+                      slot="close"
+                    >
+                      <IconButton icon={<IconMaterialSymbolsDelete />} variant="danger">
+                        <p>削除</p>
+                      </IconButton>
+                    </AriaButton>
+                  </ModalFooter>
+                </div>
+              </Modal>
+            </DialogTrigger>
+          )}
         </div>
         <div style={{ position: "relative", width: "300px", padding: "20px" }}>
           <IconMaterialSymbolsSearch
