@@ -277,70 +277,76 @@ export default function Member(): JSX.Element {
 
   return (
     <div>
-      <div>
-        <img
-          src={defaultIcon}
-          style={{ width: "89px", height: "89px", borderRadius: "50%" }}
-        />
-        {member?.name}
-        {member?.studentId}
-        <IconButton
-          icon={<IconMaterialSymbolsArrowBack />}
-          onClick={() => void navigate("/members")}
-          variant="outlined"
-        >
-          <p>戻る</p>
-        </IconButton>
-        <IconButton
-          icon={<IconMaterialSymbolsEdit />}
-          onClick={() => void navigate(`/members/${memberId}/edit`)}
-          variant="filled"
-        >
-          <p>自分の情報の編集</p>
-        </IconButton>
-        <DialogTrigger>
-          <AriaButton
-            style={{
-              all: "unset",
-              cursor: "pointer",
-            }}
+      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <img
+            src={defaultIcon}
+            style={{ width: "89px", height: "89px", borderRadius: "50%" }}
+          />
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <span>{member?.name}</span>
+            <span>{member?.studentId}</span>
+          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <IconButton
+            icon={<IconMaterialSymbolsArrowBack />}
+            onClick={() => void navigate("/members")}
+            variant="outlined"
           >
-            <IconButton icon={<IconMaterialSymbolsDeleteForever />} variant="danger">
-              <p>部員を削除</p>
-            </IconButton>
-          </AriaButton>
-          <Modal showCloseButton={false}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-              <h2 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#111827" }}>
-                部員を削除
-              </h2>
-              <p style={{ fontSize: "0.875rem", color: "#6b7280" }}>
-                {member?.name}
-                を削除してもよろしいですか?
-                <br />
-                この操作は取り消せません。
-              </p>
-              <ModalFooter>
-                <AriaButton slot="close">
-                  <IconButton icon={<IconMaterialSymbolsArrowBack />}>
-                    <p>キャンセル</p>
-                  </IconButton>
-                </AriaButton>
-                <AriaButton
-                  onPress={(): void => {
-                    // ここで削除処理を実装
-                    void navigate("/members");
-                  }}
-                  slot="close"
-                >
-                  <IconButton icon={<IconMaterialSymbolsDelete />} variant="danger">
-                    <p>削除</p>
-                  </IconButton>
-                </AriaButton>
-              </ModalFooter>
-            </div>
-          </Modal>
-        </DialogTrigger>
+            <p>戻る</p>
+          </IconButton>
+          <IconButton
+            icon={<IconMaterialSymbolsEdit />}
+            onClick={() => void navigate(`/members/${memberId}/edit`)}
+            variant="filled"
+          >
+            <p>自分の情報の編集</p>
+          </IconButton>
+          <DialogTrigger>
+            <AriaButton
+              style={{
+                all: "unset",
+                cursor: "pointer",
+              }}
+            >
+              <IconButton icon={<IconMaterialSymbolsDeleteForever />} variant="danger">
+                <p>部員を削除</p>
+              </IconButton>
+            </AriaButton>
+            <Modal showCloseButton={false}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                <h2 style={{ fontSize: "1.25rem", fontWeight: "600", color: "#111827" }}>
+                  部員を削除
+                </h2>
+                <p style={{ fontSize: "0.875rem", color: "#6b7280" }}>
+                  {member?.name}
+                  を削除してもよろしいですか?
+                  <br />
+                  この操作は取り消せません。
+                </p>
+                <ModalFooter>
+                  <AriaButton slot="close">
+                    <IconButton icon={<IconMaterialSymbolsArrowBack />}>
+                      <p>キャンセル</p>
+                    </IconButton>
+                  </AriaButton>
+                  <AriaButton
+                    onPress={(): void => {
+                      // ここで削除処理を実装
+                      void navigate("/members");
+                    }}
+                    slot="close"
+                  >
+                    <IconButton icon={<IconMaterialSymbolsDelete />} variant="danger">
+                      <p>削除</p>
+                    </IconButton>
+                  </AriaButton>
+                </ModalFooter>
+              </div>
+            </Modal>
+          </DialogTrigger>
+        </div>
       </div>
 
       <Tabs>
