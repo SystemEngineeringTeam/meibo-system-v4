@@ -8,6 +8,9 @@ export const registrationSchema = z.object({
   graduationYear: z.string().min(1, { message: "卒業年度を選択してください" }),
   grade: z.string().min(1, { message: "学年を選択してください" }),
   affiliation: z.enum(["内部", "外部"], { message: "所属を選択してください" }),
+  studentId: z.string()
+    .min(1, { message: "学籍番号を入力してください" })
+    .regex(/^[kxvehtlasdpmbc]\d{5}$/i, { message: "学籍番号はk, xなどのいずれかの後に5桁の半角数字で入力してください" }),
   schoolName: z.string().optional(),
   departmentName: z.string().optional(),
   otherAffiliation: z.string().optional(),

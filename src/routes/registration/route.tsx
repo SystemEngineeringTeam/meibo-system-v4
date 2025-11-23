@@ -10,6 +10,45 @@ import { RadioGroup } from "@/components/recipes/atomic/RadioGroup";
 import { DynamicFieldSelect, GradeSelect } from "@/components/recipes/DomainSelects";
 import { registrationSchema } from "@/schemes/registration";
 
+type FieldType = "text" | "select" | "radio" | "date" | "grade";
+
+type FormField = {
+  id: number;
+  label: string;
+  name: keyof RegistrationFormData;
+  placeholder?: string;
+  type?: FieldType;
+};
+
+const FORM_FIELDS: FormField[] = [
+  { id: 1, label: "名前", name: "name", placeholder: "石丸凛弥" },
+  { id: 2, label: "フリガナ", name: "furigana", placeholder: "インマルリンヤ" },
+  { id: 3, label: "卒業(予定)年度", name: "graduationYear", placeholder: "28卒", type: "select" },
+  { id: 4, label: "学年", name: "grade", type: "grade" },
+  { id: 5, label: "所属", name: "affiliation", type: "radio" },
+  { id: 6, label: "学籍番号", name: "studentId", placeholder: "k24015" },
+  { id: 7, label: "学校名", name: "schoolName", placeholder: "中央大学" },
+  { id: 8, label: "学部名", name: "departmentName", placeholder: "情報科学科" },
+  { id: 9, label: "他の所属団体", name: "otherAffiliation", placeholder: "Code" },
+  { id: 10, label: "誕生日", name: "birthday", placeholder: "2005/07/18", type: "date" },
+  { id: 11, label: "性別", name: "gender", type: "radio" },
+  { id: 12, label: "電話番号", name: "phoneNumber", placeholder: "090-0000-0000" },
+  { id: 13, label: "郵便番号", name: "postalCode", placeholder: "000-0000" },
+  { id: 14, label: "現在の住所", name: "currentAddress", placeholder: "名古屋市名東区39" },
+  { id: 15, label: "実家暮らしか", name: "isLivingWithFamily", type: "radio" },
+  { id: 16, label: "実家の郵便番号", name: "familyPostalCode", placeholder: "000-0000" },
+  { id: 17, label: "実家の住所", name: "familyAddress", placeholder: "名古屋市名東区39" },
+  { id: 18, label: "お金を渡した人", name: "paidPerson", placeholder: "石丸", type: "select" },
+];
+
+const SPECIAL_RENDERING_IDS = {
+  AFFILIATION: 5,
+  GENDER: 11,
+  LIVING_WITH_FAMILY: 15,
+  STUDENT_ID: 6,
+  OTHER_AFFILIATION: 9,
+} as const;
+
 export default function Registration(): JSX.Element {
   const navigate = useNavigate();
   const {
@@ -25,40 +64,22 @@ export default function Registration(): JSX.Element {
   const affiliation = watch("affiliation");
   const isLivingWithFamily = watch("isLivingWithFamily");
 
-  const onSubmit = (data: RegistrationFormData): void => {
-    // eslint-disable-next-line no-console
-    console.log("Form submitted:", data);
+  const onSubmit = (_data: RegistrationFormData): void => {
     void navigate("/members");
   };
-
-  const fields = [
-    { id: 1, label: "名前", placeholder: "石丸凛弥", name: "name" as const },
-    { id: 2, label: "フリガナ", placeholder: "インマルリンヤ", name: "furigana" as const },
-    { id: 3, label: "卒業(予定)年度", placeholder: "28卒", name: "graduationYear" as const },
-    { id: 4, label: "学年", placeholder: "B1", name: "grade" as const },
-    { id: 5, label: "所属", type: "select" as const, name: "affiliation" as const },
-    { id: 6, label: "学校名", placeholder: "中央大学", name: "schoolName" as const },
-    { id: 7, label: "学部名", placeholder: "情報科学科", name: "departmentName" as const },
-    { id: 8, label: "他の所属団体", placeholder: "Code", name: "otherAffiliation" as const },
-    { id: 9, label: "誕生日", placeholder: "2005/07/18", name: "birthday" as const },
-    { id: 10, label: "性別", placeholder: "男性 / 女性 / その他", name: "gender" as const },
-    { id: 11, label: "電話番号", placeholder: "090-0000-0000", name: "phoneNumber" as const },
-    { id: 12, label: "郵便番号", placeholder: "000-0000", name: "postalCode" as const },
-    { id: 13, label: "現在の住所", placeholder: "名古屋市名東区39", name: "currentAddress" as const },
-    { id: 14, label: "実家暮らしか", type: "radio" as const, name: "isLivingWithFamily" as const },
-    { id: 15, label: "実家の郵便番号", placeholder: "000-0000", name: "familyPostalCode" as const },
-    { id: 16, label: "実家の住所", placeholder: "名古屋市名東区39", name: "familyAddress" as const },
-    { id: 17, label: "お金を渡した人", placeholder: "石丸", name: "paidPerson" as const },
-  ];
 
   // フィールドの表示/非表示を判定
   const shouldHideField = (fieldId: number): boolean => {
     // 内部生の場合、学校名・学部名を非表示
-    if (fieldId === 6 || fieldId === 7) {
+    if (fieldId === 7 || fieldId === 8) {
       return affiliation !== "外部";
     }
-    // 実家暮らしでない場合、実家の郵便番号・住所を表示
-    if (fieldId === 15 || fieldId === 16) {
+    // 学籍番号は内部生の場合のみ表示
+    if (fieldId === SPECIAL_RENDERING_IDS.STUDENT_ID) {
+      return affiliation !== "内部";
+    }
+    // 実家暮らしでない場合、実家の郵便番号・住所を非表示
+    if (fieldId === 16 || fieldId === 17) {
       return isLivingWithFamily !== "いいえ";
     }
     return false;
@@ -113,7 +134,8 @@ export default function Registration(): JSX.Element {
     </div>
   );
 
-  const genderSelection = (label: string): JSX.Element => (
+  // 性別フィールドのレンダリング
+  const renderGenderField = (label: string): JSX.Element => (
     <div style={{ padding: "20px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
       <div>
         <p style={{ marginBottom: "8px" }}>{label}</p>
@@ -136,64 +158,58 @@ export default function Registration(): JSX.Element {
     </div>
   );
 
-  // 通常の入力フィールドのレンダリング
-  const renderInputField = (field: typeof fields[number]): JSX.Element => {
-    if (!("name" in field) || !("placeholder" in field))
-      return <></>;
+  // フィールドの特別なレンダリング処理
+  const renderSpecialField = (field: FormField): JSX.Element | null => {
+    switch (field.id) {
+      case SPECIAL_RENDERING_IDS.AFFILIATION:
+        return renderAffiliationField(field.label);
+      case SPECIAL_RENDERING_IDS.GENDER:
+        return renderGenderField(field.label);
+      case SPECIAL_RENDERING_IDS.LIVING_WITH_FAMILY:
+        return renderLivingWithFamilyField(field.label);
+      default:
+        return null;
+    }
+  };
 
+  // フィールドタイプに応じた入力要素のレンダリング
+  const renderFieldInput = (field: FormField): JSX.Element => {
     const fieldName = field.name;
-    const error = errors[fieldName];
 
-    return (
-      <div
-        style={{
-          padding: "20px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "100px",
-        }}
-      >
-        <div>
-          <p>{field.label}</p>
-          {error && (
-            <p style={{ fontSize: "12px", color: "red" }}>{error.message as string}</p>
-          )}
-        </div>
-        {(field.id === 3 || field.id === 17)
-          ? (
-              <DynamicFieldSelect
-                {...register(fieldName)}
-                id={field.id}
-                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                  setValue(fieldName, e.target.value);
-                }}
-                value={watch(fieldName) ?? ""}
-              />
-            )
-          : (field.id === 4)
-              ? (
-                  <GradeSelect {...register(fieldName)} />
-                )
-              : (field.id === 9)
-                  ? (
-                      <DatePicker
-                        {...register(fieldName)}
-                        onChange={(value: string) => {
-                          setValue(fieldName, value);
-                        }}
-                        placeholder={field.placeholder}
-                        value={watch(fieldName) ?? ""}
-                      />
-                    )
-                  : (
-                      <Input
-                        {...register(fieldName)}
-                        placeholder={field.placeholder}
-                      />
-                    )}
-      </div>
-    );
+    switch (field.id) {
+      case 3:
+      case 18:
+        return (
+          <DynamicFieldSelect
+            {...register(fieldName)}
+            id={field.id}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+              setValue(fieldName, e.target.value);
+            }}
+            value={watch(fieldName) ?? ""}
+          />
+        );
+      case 4:
+        return <GradeSelect {...register(fieldName)} />;
+      case 10:
+        return (
+          <DatePicker
+            {...register(fieldName)}
+            onChange={(value: string) => {
+              setValue(fieldName, value);
+            }}
+            placeholder={field.placeholder ?? ""}
+            value={watch(fieldName) ?? ""}
+          />
+        );
+      default:
+        return (
+          <Input
+            {...register(fieldName)}
+            placeholder={field.placeholder}
+          />
+        );
+    }
   };
 
   return (
@@ -208,30 +224,37 @@ export default function Registration(): JSX.Element {
         margin: "0 auto",
       }}
     >
-      {fields.map((field) => {
-        // 非表示対象のフィールドはスキップ
+      {FORM_FIELDS.map((field) => {
         if (shouldHideField(field.id)) {
           return null;
         }
 
+        const specialField = renderSpecialField(field);
+
         return (
           <div key={field.id}>
-            {/* 所属フィールド */}
-            {field.id === 5 && renderAffiliationField(field.label)}
-
-            {field.id === 10 && genderSelection(field.label)}
-
-            {/* 実家暮らしフィールド */}
-            {field.id === 14 && renderLivingWithFamilyField(field.label)}
-
-            {/* 通常の入力フィールド */}
-            {field.id !== 5
-              && field.id !== 10
-              && field.id !== 14
-              && renderInputField(field)}
+            {specialField || (
+              <div
+                style={{
+                  padding: "20px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "100px",
+                }}
+              >
+                <div>
+                  <p>{field.label}</p>
+                  {errors[field.name] && (
+                    <p style={{ fontSize: "12px", color: "red" }}>{errors[field.name]?.message as string}</p>
+                  )}
+                </div>
+                {renderFieldInput(field)}
+              </div>
+            )}
 
             {/* 非公開情報の注釈 */}
-            {field.id === 8 && (
+            {field.id === SPECIAL_RENDERING_IDS.OTHER_AFFILIATION && (
               <p
                 style={{
                   color: "#72787E",
