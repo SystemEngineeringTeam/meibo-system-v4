@@ -1,8 +1,10 @@
 import type { JSX } from "react";
 import type { RegistrationFormData } from "@/schemes/registration";
 import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { toKatakana } from "wanakana";
 import DatePicker from "@/components/DatePicker";
 import IconButton from "@/components/IconButton";
 import { Input } from "@/components/recipes/atomic/Input";
@@ -63,6 +65,53 @@ export default function Registration(): JSX.Element {
 
   const affiliation = watch("affiliation");
   const isLivingWithFamily = watch("isLivingWithFamily");
+
+  const nameInputRef = React.useRef<HTMLInputElement>(null);
+  const [isComposing, setIsComposing] = React.useState<boolean>(false);
+  const accumulatedFuriganaRef = React.useRef<string>("");
+
+  // IME入力中のひらがなのみをカタカナに変換
+  React.useEffect(() => {
+    const nameInput = nameInputRef.current;
+    if (!nameInput) {
+      return;
+    }
+
+    const handleCompositionStart = (): void => {
+      setIsComposing(true);
+    };
+
+    const handleCompositionUpdate = (e: CompositionEvent): void => {
+      if (!isComposing) {
+        return;
+      }
+      const inputText = e.data || "";
+      // ひらがなのみを抽出（漢字や変換候補を除外）
+      const hiraganaOnly = inputText.replace(/[^\u3040-\u309F]/g, "");
+      if (hiraganaOnly) {
+        const katakanaText = toKatakana(hiraganaOnly);
+        const newFurigana = accumulatedFuriganaRef.current + katakanaText;
+        setValue("furigana", newFurigana as RegistrationFormData["furigana"]);
+      }
+    };
+
+    const handleCompositionEnd = (): void => {
+      setIsComposing(false);
+      // 変換確定時に現在のフリガナを保存
+      const currentFurigana = watch("furigana") || "";
+      accumulatedFuriganaRef.current = currentFurigana;
+    };
+
+    nameInput.addEventListener("compositionstart", handleCompositionStart);
+    nameInput.addEventListener("compositionupdate", handleCompositionUpdate as EventListener);
+    nameInput.addEventListener("compositionend", handleCompositionEnd);
+
+    return (): void => {
+      nameInput.removeEventListener("compositionstart", handleCompositionStart);
+      nameInput.removeEventListener("compositionupdate", handleCompositionUpdate as EventListener);
+      nameInput.removeEventListener("compositionend", handleCompositionEnd);
+    };
+  }, [setValue, isComposing, watch]);
 
   const onSubmit = (_data: RegistrationFormData): void => {
     void navigate("/members");
@@ -177,6 +226,23 @@ export default function Registration(): JSX.Element {
     const fieldName = field.name;
 
     switch (field.id) {
+      case 1:
+        // 名前フィールド
+        return (
+          <Input
+            {...register(fieldName)}
+            placeholder={field.placeholder}
+            ref={nameInputRef}
+          />
+        );
+      case 2:
+        // フリガナフィールド
+        return (
+          <Input
+            {...register(fieldName)}
+            placeholder={field.placeholder}
+          />
+        );
       case 3:
       case 18:
         return (
