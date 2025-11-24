@@ -11,6 +11,9 @@ import {
   Heading,
   Popover,
 } from "react-aria-components";
+import IconMaterialSymbolsCalendarMonth from "~icons/material-symbols/calendar-month";
+import IconMaterialSymbolsChevronLeft from "~icons/material-symbols/chevron-left";
+import IconMaterialSymbolsChevronRight from "~icons/material-symbols/chevron-right";
 import IconInput from "./IconInput";
 
 type DatePickerProps = {

@@ -5,6 +5,8 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { toKatakana } from "wanakana";
+import IconMaterialSymbolsArrowForward from "~icons/material-symbols/arrow-forward";
+import IconMaterialSymbolsLock from "~icons/material-symbols/lock";
 import DatePicker from "@/components/DatePicker";
 import IconButton from "@/components/IconButton";
 import { Input } from "@/components/recipes/atomic/Input";
