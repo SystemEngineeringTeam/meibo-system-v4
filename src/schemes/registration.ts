@@ -8,9 +8,7 @@ export const registrationSchema = z.object({
   graduationYear: z.string().min(1, { message: "卒業年度を選択してください" }),
   grade: z.string().min(1, { message: "学年を選択してください" }),
   affiliation: z.enum(["内部", "外部"], { message: "所属を選択してください" }),
-  studentId: z.string()
-    .min(1, { message: "学籍番号を入力してください" })
-    .regex(/^[kxvehtlasdpmbc]\d{5}$/i, { message: "学籍番号はk, xなどのいずれかの後に5桁の半角数字で入力してください" }),
+  studentId: z.string().optional(),
   schoolName: z.string().optional(),
   departmentName: z.string().optional(),
   otherAffiliation: z.string().optional(),
@@ -26,7 +24,25 @@ export const registrationSchema = z.object({
   isLivingWithFamily: z.enum(["はい", "いいえ"], { message: "実家暮らしかどうかを選択してください" }),
   familyPostalCode: z.string().optional(),
   familyAddress: z.string().optional(),
-  paidPerson: z.string().min(1, { message: "お金を渡した人を入力してください" }),
+  paidPerson: z.string().optional(),
+}).refine((data) => {
+  // 内部生の場合、学籍番号は必須
+  if (data.affiliation === "内部") {
+    return (data.studentId?.length ?? 0) > 0;
+  }
+  return true;
+}, {
+  message: "内部生の場合、学籍番号を入力してください",
+  path: ["studentId"],
+}).refine((data) => {
+  // 内部生の場合、学籍番号の形式チェック
+  if (data.affiliation === "内部" && data.studentId != null && data.studentId !== "") {
+    return /^[kxvehtlasdpmbc]\d{5}$/i.test(data.studentId);
+  }
+  return true;
+}, {
+  message: "学籍番号はk, xなどのいずれかの後に5桁の半角数字で入力してください",
+  path: ["studentId"],
 }).refine((data) => {
   // 外部生の場合、学校名と学部名は必須
   if (data.affiliation === "外部") {

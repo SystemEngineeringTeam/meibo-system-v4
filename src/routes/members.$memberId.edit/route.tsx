@@ -20,6 +20,7 @@ function getDefaultValues(_memberId: string | undefined): Partial<RegistrationFo
     graduationYear: "28卒",
     grade: "B3",
     affiliation: "内部",
+    studentId: "K24015",
     schoolName: "",
     departmentName: "",
     otherAffiliation: "Code",
@@ -31,7 +32,6 @@ function getDefaultValues(_memberId: string | undefined): Partial<RegistrationFo
     isLivingWithFamily: "いいえ",
     familyPostalCode: "465-0001",
     familyAddress: "名古屋市名東区39",
-    paidPerson: "石丸",
   };
 
   return defaultData;
@@ -56,8 +56,6 @@ export default function Registration(): JSX.Element {
   const isLivingWithFamily = watch("isLivingWithFamily");
 
   const onSubmit = (data: RegistrationFormData): void => {
-    // eslint-disable-next-line no-console
-    console.log("Form submitted:", data);
     // 更新された名前をローカルストレージに保存
     if (memberId != null && data.name != null) {
       localStorage.setItem(`member_${memberId}_name`, data.name);
@@ -71,28 +69,32 @@ export default function Registration(): JSX.Element {
     { id: 3, label: "卒業(予定)年度", placeholder: "28卒", name: "graduationYear" as const },
     { id: 4, label: "学年", placeholder: "B1", name: "grade" as const },
     { id: 5, label: "所属", type: "select" as const, name: "affiliation" as const },
-    { id: 6, label: "学校名", placeholder: "中央大学", name: "schoolName" as const },
-    { id: 7, label: "学部名", placeholder: "情報科学科", name: "departmentName" as const },
-    { id: 8, label: "他の所属団体", placeholder: "Code", name: "otherAffiliation" as const },
-    { id: 9, label: "誕生日", placeholder: "2005/07/18", name: "birthday" as const },
-    { id: 10, label: "性別", placeholder: "男性 / 女性 / その他", name: "gender" as const },
-    { id: 11, label: "電話番号", placeholder: "090-0000-0000", name: "phoneNumber" as const },
-    { id: 12, label: "郵便番号", placeholder: "000-0000", name: "postalCode" as const },
-    { id: 13, label: "現在の住所", placeholder: "名古屋市名東区39", name: "currentAddress" as const },
-    { id: 14, label: "実家暮らしか", type: "radio" as const, name: "isLivingWithFamily" as const },
-    { id: 15, label: "実家の郵便番号", placeholder: "000-0000", name: "familyPostalCode" as const },
-    { id: 16, label: "実家の住所", placeholder: "名古屋市名東区39", name: "familyAddress" as const },
-    { id: 17, label: "お金を渡した人", placeholder: "石丸", name: "paidPerson" as const },
+    { id: 6, label: "学籍番号", placeholder: "k24015", name: "studentId" as const },
+    { id: 7, label: "学校名", placeholder: "中央大学", name: "schoolName" as const },
+    { id: 8, label: "学部名", placeholder: "情報科学科", name: "departmentName" as const },
+    { id: 9, label: "他の所属団体", placeholder: "Code", name: "otherAffiliation" as const },
+    { id: 10, label: "誕生日", placeholder: "2005/07/18", name: "birthday" as const },
+    { id: 11, label: "性別", placeholder: "男性 / 女性 / その他", name: "gender" as const },
+    { id: 12, label: "電話番号", placeholder: "090-0000-0000", name: "phoneNumber" as const },
+    { id: 13, label: "郵便番号", placeholder: "000-0000", name: "postalCode" as const },
+    { id: 14, label: "現在の住所", placeholder: "名古屋市名東区39", name: "currentAddress" as const },
+    { id: 15, label: "実家暮らしか", type: "radio" as const, name: "isLivingWithFamily" as const },
+    { id: 16, label: "実家の郵便番号", placeholder: "000-0000", name: "familyPostalCode" as const },
+    { id: 17, label: "実家の住所", placeholder: "名古屋市名東区39", name: "familyAddress" as const },
   ];
 
   // フィールドの表示/非表示を判定
   const shouldHideField = (fieldId: number): boolean => {
     // 内部生の場合、学校名・学部名を非表示
-    if (fieldId === 6 || fieldId === 7) {
+    if (fieldId === 7 || fieldId === 8) {
       return affiliation !== "外部";
     }
-    // 実家暮らしでない場合、実家の郵便番号・住所を表示
-    if (fieldId === 15 || fieldId === 16) {
+    // 学籍番号は内部生の場合のみ表示
+    if (fieldId === 6) {
+      return affiliation !== "内部";
+    }
+    // 実家暮らしでない場合、実家の郵便番号・住所を非表示
+    if (fieldId === 16 || fieldId === 17) {
       return isLivingWithFamily !== "いいえ";
     }
     return false;
@@ -194,7 +196,7 @@ export default function Registration(): JSX.Element {
             <p style={{ fontSize: "12px", color: "red" }}>{error.message as string}</p>
           )}
         </div>
-        {(field.id === 3 || field.id === 17)
+        {(field.id === 3)
           ? (
               <DynamicFieldSelect
                 {...register(fieldName)}
@@ -209,7 +211,7 @@ export default function Registration(): JSX.Element {
               ? (
                   <GradeSelect {...register(fieldName)} />
                 )
-              : (field.id === 9)
+              : (field.id === 10)
                   ? (
                       <DatePicker
                         {...register(fieldName)}
@@ -253,19 +255,19 @@ export default function Registration(): JSX.Element {
             {/* 所属フィールド */}
             {field.id === 5 && renderAffiliationField(field.label)}
 
-            {field.id === 10 && genderSelection(field.label)}
+            {field.id === 11 && genderSelection(field.label)}
 
             {/* 実家暮らしフィールド */}
-            {field.id === 14 && renderLivingWithFamilyField(field.label)}
+            {field.id === 15 && renderLivingWithFamilyField(field.label)}
 
             {/* 通常の入力フィールド */}
             {field.id !== 5
-              && field.id !== 10
-              && field.id !== 14
+              && field.id !== 11
+              && field.id !== 15
               && renderInputField(field)}
 
             {/* 非公開情報の注釈 */}
-            {field.id === 8 && (
+            {field.id === 9 && (
               <p
                 style={{
                   color: "#72787E",
@@ -296,9 +298,12 @@ export default function Registration(): JSX.Element {
           icon={<IconMaterialSymbolsArrowForward />}
           onClick={(e) => {
             e.preventDefault();
-            void handleSubmit(onSubmit)();
+            const form = e.currentTarget.closest("form");
+            if (form != null) {
+              form.requestSubmit();
+            }
           }}
-          type="submit"
+          type="button"
           variant="filled"
         >
           <p>更新</p>
