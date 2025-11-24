@@ -303,7 +303,7 @@ export default function Registration(): JSX.Element {
               form.requestSubmit();
             }
           }}
-          type="submit"
+          type="button"
           variant="filled"
         >
           <p>更新</p>
