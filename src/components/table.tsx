@@ -87,9 +87,10 @@ type MemberTableProps<TData extends Record<string, unknown>> = {
   onSort?: (sortKey: string) => void;
   sortedBy?: string;
   sortOrder?: "asc" | "desc";
+  width?: string;
 };
 
-export default function MemberTable<TData extends Record<string, unknown>>({ columns, data }: MemberTableProps<TData>): JSX.Element {
+export default function MemberTable<TData extends Record<string, unknown>>({ columns, data, width }: MemberTableProps<TData>): JSX.Element {
   const style = styles();
 
   const table = useReactTable({
@@ -106,7 +107,14 @@ export default function MemberTable<TData extends Record<string, unknown>>({ col
 
   return (
     <div className={style.container}>
-      <table aria-label="Members" className={style.table ?? ""}>
+      <table
+        aria-label="Members"
+        className={style.table ?? ""}
+        style={{
+          ...(width != null && width !== "" ? { width } : {}),
+          ...(width === "auto" ? { tableLayout: "auto" } : {}),
+        }}
+      >
         <thead className={style.header ?? ""}>
           {table.getHeaderGroups().map((hg) => (
             <tr key={hg.id}>
