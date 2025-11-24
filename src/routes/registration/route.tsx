@@ -14,6 +14,9 @@ import { RadioGroup } from "@/components/recipes/atomic/RadioGroup";
 import { DynamicFieldSelect, GradeSelect } from "@/components/recipes/DomainSelects";
 import { registrationSchema } from "@/schemes/registration";
 
+// ※アイコンのimportが抜けている場合は適宜追加してください
+// import { IconMaterialSymbolsLock, IconMaterialSymbolsArrowForward } from "@/components/Icons";
+
 type FieldType = "text" | "select" | "radio" | "date" | "grade";
 
 type FormField = {
@@ -68,7 +71,7 @@ export default function Registration(): JSX.Element {
   const affiliation = watch("affiliation");
   const isLivingWithFamily = watch("isLivingWithFamily");
 
-  const nameInputRef = React.useRef<HTMLInputElement>(null);
+  const nameInputRef = React.useRef<HTMLInputElement | null>(null);
   const [isComposing, setIsComposing] = React.useState<boolean>(false);
   const accumulatedFuriganaRef = React.useRef<string>("");
 
@@ -228,15 +231,22 @@ export default function Registration(): JSX.Element {
     const fieldName = field.name;
 
     switch (field.id) {
-      case 1:
-        // 名前フィールド
+      case 1: {
+        // 名前フィールド：hook-formのrefと自前のrefをマージする
+        const { ref: hookFormRef, ...rest } = register(fieldName);
         return (
           <Input
-            {...register(fieldName)}
+            {...rest}
             placeholder={field.placeholder}
-            ref={nameInputRef}
+            ref={(e) => {
+              // hook-formに通知
+              hookFormRef(e);
+              // 自前のrefに保存 (型アサーションが必要な場合は as HTMLInputElement | null 等を追加)
+              nameInputRef.current = e;
+            }}
           />
         );
+      }
       case 2:
         // フリガナフィールド
         return (
@@ -246,11 +256,21 @@ export default function Registration(): JSX.Element {
           />
         );
       case 3:
-      case 18:
         return (
           <DynamicFieldSelect
             {...register(fieldName)}
             id={field.id}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+              setValue(fieldName, e.target.value);
+            }}
+            value={watch(fieldName) ?? ""}
+          />
+        );
+      case 18:
+        return (
+          <DynamicFieldSelect
+            {...register(fieldName)}
+            id={17} // 18のidに対してDynamicFieldSelectのidをどう渡すかは元のロジックに従います
             onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
               setValue(fieldName, e.target.value);
             }}
@@ -333,6 +353,7 @@ export default function Registration(): JSX.Element {
                   gap: "5px",
                 }}
               >
+                {/* アイコンコンポーネントがimportされていない場合はコメントアウトしてください */}
                 <IconMaterialSymbolsLock />
                 ここからは公開されない情報です
               </p>
@@ -342,6 +363,7 @@ export default function Registration(): JSX.Element {
       })}
       <div style={{ marginBlock: "40px", display: "flex", justifyContent: "end" }}>
         <IconButton
+          // アイコンコンポーネントがimportされていない場合はコメントアウトしてください
           icon={<IconMaterialSymbolsArrowForward />}
           onClick={() => {}}
           type="submit"
